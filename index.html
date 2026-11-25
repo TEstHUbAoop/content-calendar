@@ -1,0 +1,3065 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Atelier Studio — Editorial Content Calendar</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Editorial Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', '-apple-system', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    :root {
+      --bg-canvas: #FAF9F6;
+      --bg-surface: #FFFFFF;
+      --bg-subtle: #F3F1EC;
+      --bg-hover: #ECE9E2;
+      --border-hairline: #E6E4DF;
+      --border-strong: #D4D1C9;
+      --text-primary: #18181B;
+      --text-secondary: #52525B;
+      --text-muted: #8A8A93;
+      --accent-primary: #D94E34;
+      --accent-hover: #C24129;
+      --accent-soft: rgba(217, 78, 52, 0.10);
+    }
+
+    html.dark {
+      --bg-canvas: #111113;
+      --bg-surface: #19191C;
+      --bg-subtle: #222226;
+      --bg-hover: #2A2A2F;
+      --border-hairline: #27272A;
+      --border-strong: #3F3F46;
+      --text-primary: #F4F4F5;
+      --text-secondary: #A1A1AA;
+      --text-muted: #71717A;
+      --accent-primary: #E85D43;
+      --accent-hover: #F26D54;
+      --accent-soft: rgba(232, 93, 67, 0.14);
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      background-color: var(--bg-canvas);
+      color: var(--text-primary);
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .surface-card {
+      background-color: var(--bg-surface);
+      border-color: var(--border-hairline);
+    }
+
+    .surface-subtle {
+      background-color: var(--bg-subtle);
+      border-color: var(--border-hairline);
+    }
+
+    .border-hairline {
+      border-color: var(--border-hairline);
+    }
+
+    .text-ink {
+      color: var(--text-primary);
+    }
+
+    .text-ink-secondary {
+      color: var(--text-secondary);
+    }
+
+    .text-ink-muted {
+      color: var(--text-muted);
+    }
+
+    .btn-terracotta {
+      background-color: var(--accent-primary);
+      color: #FFFFFF;
+    }
+    .btn-terracotta:hover {
+      background-color: var(--accent-hover);
+    }
+
+    /* Refined minimal scrollbars */
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--border-strong);
+      border-radius: 9999px;
+    }
+
+    /* Drag & Drop tactile feedback */
+    .drag-over-target {
+      background-color: var(--accent-soft) !important;
+      outline: 1.5px dashed var(--accent-primary);
+      outline-offset: -2px;
+    }
+    .is-dragging {
+      opacity: 0.4;
+      transform: scale(0.98);
+    }
+
+    /* Slide-over drawer transitions */
+    .drawer-backdrop {
+      transition: opacity 0.2s ease;
+    }
+    .drawer-sheet {
+      transition: transform 0.26s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Subtle segmented control pill */
+    .view-pill-active {
+      background-color: var(--bg-surface);
+      color: var(--text-primary);
+      border: 1px solid var(--border-hairline);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased selection:bg-[#D94E34]/15 selection:text-[#D94E34]">
+
+  <!-- TOP EDITORIAL STUDIO HEADER -->
+  <header class="surface-card border-b sticky top-0 z-30">
+    <div class="max-w-[1640px] mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-wrap items-center justify-between gap-3 py-3">
+
+        <!-- Left: Studio Brand + Workspace Creator Switcher -->
+        <div class="flex items-center gap-4">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-sm tracking-tight" style="background-color: var(--accent-primary);">
+              A.
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="font-bold text-sm sm:text-base tracking-tight text-ink">Atelier Studio</span>
+                <span class="hidden md:inline-block font-mono text-[10px] uppercase tracking-widest px-1.5 py-0.5 rounded border border-hairline text-ink-muted">
+                  Editorial
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="h-5 w-px bg-[var(--border-hairline)] hidden sm:block"></div>
+
+          <!-- Active Editor Switcher (Rick vs Boyfriend) -->
+          <div class="flex items-center gap-1.5" title="Switch who is currently editing">
+            <span class="hidden xl:inline text-xs text-ink-muted">Editing as:</span>
+            <div id="active-user-switcher" class="inline-flex p-0.5 rounded-lg surface-subtle border">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Center: Command Palette Trigger (Cmd+K) -->
+        <button
+          onclick="openCommandPalette()"
+          class="hidden md:flex items-center justify-between gap-6 px-3 py-1.5 rounded-lg surface-subtle border text-xs text-ink-muted hover:border-[var(--border-strong)] transition cursor-pointer min-w-[250px] lg:min-w-[310px]"
+        >
+          <span class="inline-flex items-center gap-2">
+            <i data-lucide="search" class="w-3.5 h-3.5"></i>
+            <span>Search posts, jump to date, commands...</span>
+          </span>
+          <kbd class="font-mono text-[10px] px-1.5 py-0.5 rounded surface-card border text-ink-secondary">⌘K</kbd>
+        </button>
+
+        <!-- Right: Sync Pill, Theme Toggle, Settings, Primary CTA -->
+        <div class="flex items-center gap-2">
+          <!-- Mobile Search Button -->
+          <button
+            onclick="openCommandPalette()"
+            aria-label="Search & Commands"
+            class="md:hidden p-2 rounded-lg surface-subtle border text-ink-secondary hover:text-ink transition cursor-pointer"
+          >
+            <i data-lucide="search" class="w-4 h-4"></i>
+          </button>
+
+          <!-- Live Sync Status Pill -->
+          <button
+            id="sync-pill-btn"
+            onclick="openWorkspaceModal('sync')"
+            class="inline-flex items-center gap-2 px-2.5 py-1.5 rounded-lg surface-subtle border text-xs font-medium text-ink-secondary hover:border-[var(--border-strong)] transition cursor-pointer"
+            title="Real-time Firebase sync & backup settings"
+          >
+            <span id="sync-dot" class="w-2 h-2 rounded-full bg-amber-500"></span>
+            <span id="sync-text" class="hidden sm:inline">Local Mode</span>
+          </button>
+
+          <!-- Theme Toggle (Warm Paper <-> Obsidian Studio) -->
+          <button
+            id="theme-toggle-btn"
+            onclick="toggleTheme()"
+            aria-label="Toggle Light or Dark Studio Theme"
+            title="Switch Warm Paper / Obsidian Studio theme"
+            class="p-2 rounded-lg surface-subtle border text-ink-secondary hover:text-ink hover:border-[var(--border-strong)] transition cursor-pointer"
+          >
+            <i id="theme-icon" data-lucide="moon" class="w-4 h-4"></i>
+          </button>
+
+          <!-- Workspace Settings & Profiles -->
+          <button
+            onclick="openWorkspaceModal('profiles')"
+            aria-label="Workspace Settings"
+            title="Customize Profiles, Sync & Export"
+            class="p-2 rounded-lg surface-subtle border text-ink-secondary hover:text-ink hover:border-[var(--border-strong)] transition cursor-pointer"
+          >
+            <i data-lucide="sliders-horizontal" class="w-4 h-4"></i>
+          </button>
+
+          <!-- Primary New Post Button -->
+          <button
+            onclick="openPostDrawer()"
+            class="btn-terracotta inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition cursor-pointer"
+          >
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            <span>New Post</span>
+            <kbd class="hidden lg:inline-block font-mono text-[10px] ml-1 px-1 py-0.2 rounded bg-black/15 text-white/90">N</kbd>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- SECONDARY CONTROL BAR: VIEW SWITCHER, DATE NAV & FILTERS -->
+  <section class="border-b border-hairline" style="background-color: var(--bg-canvas);">
+    <div class="max-w-[1640px] mx-auto px-4 sm:px-6 lg:px-8 py-3">
+      <div class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-3">
+
+        <!-- Left: 4-View Segmented Control + Date Navigation -->
+        <div class="flex flex-wrap items-center gap-3">
+          <!-- Segmented Control -->
+          <div class="inline-flex p-1 rounded-xl surface-subtle border" role="tablist">
+            <button
+              id="view-btn-month"
+              onclick="setView('month')"
+              class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold transition cursor-pointer"
+            >
+              <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
+              <span>Month</span>
+            </button>
+            <button
+              id="view-btn-week"
+              onclick="setView('week')"
+              class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold transition cursor-pointer"
+            >
+              <i data-lucide="columns-3" class="w-3.5 h-3.5"></i>
+              <span>Week</span>
+            </button>
+            <button
+              id="view-btn-board"
+              onclick="setView('board')"
+              class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold transition cursor-pointer"
+            >
+              <i data-lucide="kanban" class="w-3.5 h-3.5"></i>
+              <span>Board</span>
+            </button>
+            <button
+              id="view-btn-table"
+              onclick="setView('table')"
+              class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold transition cursor-pointer"
+            >
+              <i data-lucide="list" class="w-3.5 h-3.5"></i>
+              <span>Table</span>
+            </button>
+          </div>
+
+          <!-- Date Range Navigation (Month & Week views) -->
+          <div id="date-nav-group" class="flex items-center gap-1.5">
+            <button
+              onclick="navigatePeriod(-1)"
+              aria-label="Previous period"
+              class="p-1.5 rounded-lg surface-card border hover:border-[var(--border-strong)] text-ink-secondary transition cursor-pointer"
+            >
+              <i data-lucide="chevron-left" class="w-4 h-4"></i>
+            </button>
+            <button
+              onclick="jumpToToday()"
+              class="px-2.5 py-1 rounded-lg surface-card border hover:border-[var(--border-strong)] text-xs font-semibold text-ink transition cursor-pointer"
+            >
+              Today
+            </button>
+            <button
+              onclick="navigatePeriod(1)"
+              aria-label="Next period"
+              class="p-1.5 rounded-lg surface-card border hover:border-[var(--border-strong)] text-ink-secondary transition cursor-pointer"
+            >
+              <i data-lucide="chevron-right" class="w-4 h-4"></i>
+            </button>
+            <h1 id="period-heading" class="ml-1.5 text-sm sm:text-base font-bold tracking-tight text-ink">
+              November 2026
+            </h1>
+          </div>
+        </div>
+
+        <!-- Right: Creator Filter Pills + Platform + Pillar + Status Filters -->
+        <div class="flex flex-wrap items-center gap-2">
+          <!-- Creator 1-Click Filter -->
+          <div id="creator-filter-group" class="inline-flex p-0.5 rounded-lg surface-subtle border text-xs">
+            <!-- Rendered dynamically -->
+          </div>
+
+          <!-- Platform Filter -->
+          <select
+            id="filter-platform"
+            onchange="applyFilters()"
+            aria-label="Filter by Platform"
+            class="px-2.5 py-1.5 rounded-lg surface-card border text-xs font-medium text-ink-secondary hover:border-[var(--border-strong)] focus:outline-none cursor-pointer"
+          >
+            <option value="All">All Channels</option>
+            <option value="Instagram">Instagram</option>
+            <option value="TikTok">TikTok</option>
+            <option value="YouTube">YouTube</option>
+            <option value="LinkedIn">LinkedIn</option>
+            <option value="X / Twitter">X / Twitter</option>
+            <option value="Blog / Newsletter">Blog / Newsletter</option>
+          </select>
+
+          <!-- Content Pillar Filter -->
+          <select
+            id="filter-pillar"
+            onchange="applyFilters()"
+            aria-label="Filter by Content Pillar"
+            class="px-2.5 py-1.5 rounded-lg surface-card border text-xs font-medium text-ink-secondary hover:border-[var(--border-strong)] focus:outline-none cursor-pointer"
+          >
+            <option value="All">All Pillars</option>
+            <option value="Educational">Educational</option>
+            <option value="Behind the Scenes">Behind the Scenes</option>
+            <option value="Product / Promo">Product / Promo</option>
+            <option value="Lifestyle">Lifestyle</option>
+            <option value="Storytelling">Storytelling</option>
+          </select>
+
+          <!-- Status Filter -->
+          <select
+            id="filter-status"
+            onchange="applyFilters()"
+            aria-label="Filter by Status"
+            class="px-2.5 py-1.5 rounded-lg surface-card border text-xs font-medium text-ink-secondary hover:border-[var(--border-strong)] focus:outline-none cursor-pointer"
+          >
+            <option value="All">All Stages</option>
+            <option value="Idea">Idea</option>
+            <option value="Drafting">Drafting</option>
+            <option value="In Review">In Review</option>
+            <option value="Scheduled">Scheduled</option>
+            <option value="Published">Published</option>
+          </select>
+
+          <!-- Clear Filters Pill -->
+          <button
+            id="clear-filters-btn"
+            onclick="resetFilters()"
+            class="hidden inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer"
+            style="background-color: var(--accent-soft); color: var(--accent-primary);"
+          >
+            <i data-lucide="x" class="w-3.5 h-3.5"></i>
+            <span>Reset</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN EDITORIAL WORKSPACE -->
+  <main class="flex-1 max-w-[1640px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-5">
+
+    <!-- Subtle Pipeline Summary Strip -->
+    <div id="pipeline-strip" class="flex flex-wrap items-center justify-between gap-3 mb-4 text-xs text-ink-muted">
+      <!-- Populated dynamically -->
+    </div>
+
+    <!-- VIEW 1: MONTH GRID VIEW -->
+    <section id="view-month" class="space-y-2">
+      <div class="surface-card border rounded-xl overflow-hidden">
+        <!-- Weekday Headers -->
+        <div class="grid grid-cols-7 border-b border-hairline surface-subtle">
+          <div class="py-2 px-3 font-mono text-[11px] font-medium uppercase tracking-wider text-ink-muted">Sun</div>
+          <div class="py-2 px-3 font-mono text-[11px] font-medium uppercase tracking-wider text-ink-muted">Mon</div>
+          <div class="py-2 px-3 font-mono text-[11px] font-medium uppercase tracking-wider text-ink-muted">Tue</div>
+          <div class="py-2 px-3 font-mono text-[11px] font-medium uppercase tracking-wider text-ink-muted">Wed</div>
+          <div class="py-2 px-3 font-mono text-[11px] font-medium uppercase tracking-wider text-ink-muted">Thu</div>
+          <div class="py-2 px-3 font-mono text-[11px] font-medium uppercase tracking-wider text-ink-muted">Fri</div>
+          <div class="py-2 px-3 font-mono text-[11px] font-medium uppercase tracking-wider text-ink-muted">Sat</div>
+        </div>
+        <!-- 7-Column Calendar Matrix -->
+        <div id="month-grid" class="grid grid-cols-7 divide-x divide-y divide-[var(--border-hairline)]">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 2: WEEK & FOCUS TIMELINE VIEW -->
+    <section id="view-week" class="hidden">
+      <div id="week-grid" class="grid grid-cols-1 md:grid-cols-7 gap-3">
+        <!-- Populated dynamically -->
+      </div>
+    </section>
+
+    <!-- VIEW 3: WORKFLOW KANBAN BOARD VIEW -->
+    <section id="view-board" class="hidden">
+      <div id="board-grid" class="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 gap-3.5 items-start">
+        <!-- Populated dynamically -->
+      </div>
+    </section>
+
+    <!-- VIEW 4: EDITORIAL LIST / TABLE VIEW -->
+    <section id="view-table" class="hidden">
+      <div class="surface-card border rounded-xl overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="surface-subtle border-b border-hairline font-mono text-[11px] uppercase tracking-wider text-ink-muted">
+                <th class="py-3 px-4 cursor-pointer hover:text-ink select-none" onclick="toggleTableSort('date')">
+                  <span class="inline-flex items-center gap-1">Schedule <i data-lucide="arrow-up-down" class="w-3 h-3"></i></span>
+                </th>
+                <th class="py-3 px-4 cursor-pointer hover:text-ink select-none" onclick="toggleTableSort('title')">
+                  <span class="inline-flex items-center gap-1">Post Title <i data-lucide="arrow-up-down" class="w-3 h-3"></i></span>
+                </th>
+                <th class="py-3 px-4 cursor-pointer hover:text-ink select-none" onclick="toggleTableSort('platform')">
+                  <span class="inline-flex items-center gap-1">Channel <i data-lucide="arrow-up-down" class="w-3 h-3"></i></span>
+                </th>
+                <th class="py-3 px-4">Pillar & Format</th>
+                <th class="py-3 px-4 cursor-pointer hover:text-ink select-none" onclick="toggleTableSort('status')">
+                  <span class="inline-flex items-center gap-1">Stage <i data-lucide="arrow-up-down" class="w-3 h-3"></i></span>
+                </th>
+                <th class="py-3 px-4">Creator</th>
+                <th class="py-3 px-4 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="table-body" class="divide-y divide-[var(--border-hairline)] text-sm">
+              <!-- Populated dynamically -->
+            </tbody>
+          </table>
+        </div>
+        <div id="table-empty" class="hidden py-14 px-4 text-center">
+          <p class="text-sm font-semibold text-ink">No posts match your active filters</p>
+          <p class="text-xs text-ink-muted mt-1">Clear filters or create a new post to populate this view.</p>
+          <button onclick="openPostDrawer()" class="btn-terracotta mt-4 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold cursor-pointer">
+            <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+            <span>Create Post</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- SLIDE-OVER STUDIO DRAWER (EDITOR + LIVE SOCIAL PREVIEW + COMMENTS) -->
+  <div id="post-drawer" class="fixed inset-0 z-50 hidden" role="dialog" aria-modal="true">
+    <div id="drawer-backdrop" onclick="closePostDrawer()" class="drawer-backdrop fixed inset-0 bg-black/40 opacity-0"></div>
+
+    <div class="fixed inset-y-0 right-0 max-w-full flex pl-4 sm:pl-12">
+      <div id="drawer-sheet" class="drawer-sheet w-screen max-w-4xl surface-card border-l flex flex-col translate-x-full">
+
+        <!-- Drawer Header -->
+        <div class="px-5 py-3.5 border-b border-hairline flex items-center justify-between gap-3">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <span id="drawer-badge" class="font-mono text-[11px] uppercase tracking-wider px-2 py-0.5 rounded surface-subtle border text-ink-secondary">
+              Drafting Studio
+            </span>
+            <h2 id="drawer-heading" class="text-sm sm:text-base font-bold text-ink truncate">New Editorial Post</h2>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <!-- Mobile Preview Toggle -->
+            <div class="lg:hidden inline-flex p-0.5 rounded-lg surface-subtle border text-xs">
+              <button type="button" id="mobile-tab-edit" onclick="switchMobileDrawerPane('edit')" class="px-2.5 py-1 rounded-md font-semibold view-pill-active cursor-pointer">Edit</button>
+              <button type="button" id="mobile-tab-preview" onclick="switchMobileDrawerPane('preview')" class="px-2.5 py-1 rounded-md font-semibold text-ink-secondary cursor-pointer">Preview</button>
+            </div>
+
+            <button onclick="closePostDrawer()" aria-label="Close drawer" class="p-1.5 rounded-lg text-ink-muted hover:text-ink hover:bg-[var(--bg-subtle)] transition cursor-pointer">
+              <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Split Workspace: Left = Form Editor, Right = Live Mockup & Partner Notes -->
+        <div class="flex-1 overflow-hidden grid grid-cols-1 lg:grid-cols-12">
+
+          <!-- LEFT PANE: EDITORIAL FORM -->
+          <form id="post-form" onsubmit="handleSavePost(event)" class="lg:col-span-7 overflow-y-auto p-5 sm:p-6 space-y-4 border-r border-hairline">
+            <input type="hidden" id="post-id" />
+
+            <!-- Title -->
+            <div>
+              <label for="post-title" class="block font-mono text-[11px] uppercase tracking-wider text-ink-muted mb-1.5">
+                Headline / Working Title *
+              </label>
+              <input
+                id="post-title"
+                type="text"
+                required
+                oninput="updateLivePreview()"
+                placeholder="e.g., Sunday Morning Coffee & Workflow Setup"
+                class="w-full px-3 py-2 text-sm font-medium surface-subtle border rounded-lg text-ink focus:outline-none focus:border-[var(--accent-primary)] transition"
+              />
+            </div>
+
+            <!-- Channel & Format -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              <div>
+                <label for="post-platform" class="block font-mono text-[11px] uppercase tracking-wider text-ink-muted mb-1.5">
+                  Channel
+                </label>
+                <select
+                  id="post-platform"
+                  onchange="updateLivePreview()"
+                  class="w-full px-3 py-2 text-sm surface-subtle border rounded-lg text-ink focus:outline-none focus:border-[var(--accent-primary)] cursor-pointer"
+                >
+                  <option value="Instagram">Instagram</option>
+                  <option value="TikTok">TikTok</option>
+                  <option value="YouTube">YouTube</option>
+                  <option value="LinkedIn">LinkedIn</option>
+                  <option value="X / Twitter">X / Twitter</option>
+                  <option value="Blog / Newsletter">Blog / Newsletter</option>
+                </select>
+              </div>
+
+              <div>
+                <label for="post-format" class="block font-mono text-[11px] uppercase tracking-wider text-ink-muted mb-1.5">
+                  Format
+                </label>
+                <select
+                  id="post-format"
+                  onchange="updateLivePreview()"
+                  class="w-full px-3 py-2 text-sm surface-subtle border rounded-lg text-ink focus:outline-none focus:border-[var(--accent-primary)] cursor-pointer"
+                >
+                  <option value="Reel / Short">Reel / Short</option>
+                  <option value="Carousel">Carousel</option>
+                  <option value="Single Post">Single Post</option>
+                  <option value="Video">Video</option>
+                  <option value="Story">Story</option>
+                  <option value="Article">Article</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Pillar, Stage & Creator -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+              <div>
+                <label for="post-pillar" class="block font-mono text-[11px] uppercase tracking-wider text-ink-muted mb-1.5">
+                  Content Pillar
+                </label>
+                <select
+                  id="post-pillar"
+                  onchange="updateLivePreview()"
+                  class="w-full px-3 py-2 text-sm surface-subtle border rounded-lg text-ink focus:outline-none focus:border-[var(--accent-primary)] cursor-pointer"
+                >
+                  <option value="Educational">Educational</option>
+                  <option value="Behind the Scenes">Behind the Scenes</option>
+                  <option value="Product / Promo">Product / Promo</option>
+                  <option value="Lifestyle">Lifestyle</option>
+                  <option value="Storytelling">Storytelling</option>
+                </select>
+              </div>
+
+              <div>
+                <label for="post-status" class="block font-mono text-[11px] uppercase tracking-wider text-ink-muted mb-1.5">
+                  Workflow Stage
+                </label>
+                <select
+                  id="post-status"
+                  onchange="updateLivePreview()"
+                  class="w-full px-3 py-2 text-sm surface-subtle border rounded-lg text-ink focus:outline-none focus:border-[var(--accent-primary)] cursor-pointer"
+                >
+                  <option value="Idea">Idea</option>
+                  <option value="Drafting">Drafting</option>
+                  <option value="In Review">In Review</option>
+                  <option value="Scheduled">Scheduled</option>
+                  <option value="Published">Published</option>
+                </select>
+              </div>
+
+              <div>
+                <label for="post-creator" class="block font-mono text-[11px] uppercase tracking-wider text-ink-muted mb-1.5">
+                  Assigned Creator
+                </label>
+                <select
+                  id="post-creator"
+                  onchange="updateLivePreview()"
+                  class="w-full px-3 py-2 text-sm surface-subtle border rounded-lg text-ink focus:outline-none focus:border-[var(--accent-primary)] cursor-pointer"
+                >
+                  <!-- Populated dynamically with Rick & Boyfriend profiles -->
+                </select>
+              </div>
+            </div>
+
+            <!-- Scheduled Date & Time -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              <div>
+                <label for="post-date" class="block font-mono text-[11px] uppercase tracking-wider text-ink-muted mb-1.5">
+                  Publish Date *
+                </label>
+                <input
+                  id="post-date"
+                  type="date"
+                  required
+                  onchange="updateLivePreview()"
+                  class="w-full px-3 py-2 font-mono text-xs surface-subtle border rounded-lg text-ink focus:outline-none focus:border-[var(--accent-primary)]"
+                />
+              </div>
+
+              <div>
+                <label for="post-time" class="block font-mono text-[11px] uppercase tracking-wider text-ink-muted mb-1.5">
+                  Publish Time
+                </label>
+                <input
+                  id="post-time"
+                  type="time"
+                  value="10:00"
+                  onchange="updateLivePreview()"
+                  class="w-full px-3 py-2 font-mono text-xs surface-subtle border rounded-lg text-ink focus:outline-none focus:border-[var(--accent-primary)]"
+                />
+              </div>
+            </div>
+
+            <!-- Caption / Script with Platform Character Meter -->
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <label for="post-caption" class="font-mono text-[11px] uppercase tracking-wider text-ink-muted">
+                  Caption / Script Copy
+                </label>
+                <span id="char-limit-meter" class="font-mono text-[11px] text-ink-muted">0 / 2,200</span>
+              </div>
+              <textarea
+                id="post-caption"
+                rows="4"
+                oninput="updateLivePreview()"
+                placeholder="Write the hook, story, and call-to-action..."
+                class="w-full px-3 py-2 text-sm surface-subtle border rounded-lg text-ink focus:outline-none focus:border-[var(--accent-primary)] resize-y leading-relaxed"
+              ></textarea>
+            </div>
+
+            <!-- Visual / Shot List Notes -->
+            <div>
+              <label for="post-visual-notes" class="block font-mono text-[11px] uppercase tracking-wider text-ink-muted mb-1.5">
+                Visual Direction / Shot List Notes
+              </label>
+              <input
+                id="post-visual-notes"
+                type="text"
+                oninput="updateLivePreview()"
+                placeholder="e.g., Warm natural light, 4:5 vertical crop, B-roll of desk setup"
+                class="w-full px-3 py-2 text-xs surface-subtle border rounded-lg text-ink focus:outline-none focus:border-[var(--accent-primary)]"
+              />
+            </div>
+
+            <!-- Hashtags -->
+            <div>
+              <label for="post-tags" class="block font-mono text-[11px] uppercase tracking-wider text-ink-muted mb-1.5">
+                Hashtags & Keywords
+              </label>
+              <input
+                id="post-tags"
+                type="text"
+                oninput="updateLivePreview()"
+                placeholder="#CreativeProcess #BehindTheScenes #DailyRoutine"
+                class="w-full px-3 py-2 font-mono text-xs surface-subtle border rounded-lg text-ink focus:outline-none focus:border-[var(--accent-primary)]"
+              />
+            </div>
+          </form>
+
+          <!-- RIGHT PANE: LIVE SOCIAL MOCKUP PREVIEW + COLLABORATION NOTES -->
+          <div id="drawer-preview-pane" class="hidden lg:flex lg:col-span-5 flex-col overflow-y-auto p-5 space-y-5" style="background-color: var(--bg-canvas);">
+
+            <!-- Live Social Mockup Header -->
+            <div>
+              <div class="flex items-center justify-between mb-2.5">
+                <span class="font-mono text-[11px] uppercase tracking-wider text-ink-muted">Live Channel Preview</span>
+                <button
+                  type="button"
+                  onclick="copyFormattedCaption()"
+                  class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md surface-card border hover:border-[var(--border-strong)] text-xs font-medium text-ink-secondary transition cursor-pointer"
+                >
+                  <i data-lucide="copy" class="w-3 h-3"></i>
+                  <span>Copy Caption</span>
+                </button>
+              </div>
+
+              <!-- Authentic Social Post Card Mockup -->
+              <div id="social-mockup-card" class="surface-card border rounded-xl overflow-hidden">
+                <!-- Mockup Author Header -->
+                <div class="px-3.5 py-2.5 border-b border-hairline flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <div id="mockup-avatar" class="w-7 h-7 rounded-full flex items-center justify-center text-white font-bold text-xs" style="background-color: var(--accent-primary);">
+                      RC
+                    </div>
+                    <div>
+                      <p id="mockup-handle" class="text-xs font-bold text-ink">@atelier.studio</p>
+                      <p id="mockup-meta" class="font-mono text-[10px] text-ink-muted">Instagram • Reel / Short</p>
+                    </div>
+                  </div>
+                  <span id="mockup-status-pill" class="font-mono text-[10px] px-2 py-0.5 rounded-full surface-subtle border text-ink-secondary">
+                    Drafting
+                  </span>
+                </div>
+
+                <!-- Mockup Visual Frame -->
+                <div class="px-4 py-6 border-b border-hairline surface-subtle flex flex-col items-center justify-center text-center min-h-[130px]">
+                  <div id="mockup-platform-icon" class="w-9 h-9 rounded-full surface-card border flex items-center justify-center text-ink-secondary mb-2">
+                    <i data-lucide="instagram" class="w-4 h-4"></i>
+                  </div>
+                  <p id="mockup-title-display" class="text-xs font-bold text-ink max-w-[240px]">Untitled Post</p>
+                  <p id="mockup-visual-display" class="text-[11px] text-ink-muted mt-1 max-w-[240px] italic">
+                    Add visual direction notes to preview shot brief
+                  </p>
+                </div>
+
+                <!-- Mockup Caption & Hashtags Body -->
+                <div class="p-3.5 space-y-2">
+                  <p id="mockup-caption-display" class="text-xs text-ink leading-relaxed whitespace-pre-line">
+                    Your caption preview will appear here as you type...
+                  </p>
+                  <p id="mockup-tags-display" class="font-mono text-[11px]" style="color: var(--accent-primary);"></p>
+                  <div class="pt-2 border-t border-hairline flex items-center justify-between font-mono text-[10px] text-ink-muted">
+                    <span id="mockup-schedule-display">Nov 25, 2026 • 10:00 AM</span>
+                    <span id="mockup-pillar-display">Educational</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Partner Collaboration Notes / Comments Thread -->
+            <div class="flex-1 flex flex-col min-h-[180px]">
+              <div class="flex items-center justify-between mb-2">
+                <span class="font-mono text-[11px] uppercase tracking-wider text-ink-muted">Partner Notes & Approvals</span>
+                <span id="comment-count-badge" class="font-mono text-[10px] text-ink-muted">0 notes</span>
+              </div>
+
+              <div id="comments-list" class="flex-1 space-y-2 max-h-[210px] overflow-y-auto mb-2.5 pr-1">
+                <!-- Populated dynamically -->
+              </div>
+
+              <!-- Add Comment Input -->
+              <div class="flex items-center gap-1.5">
+                <input
+                  id="new-comment-input"
+                  type="text"
+                  onkeydown="if(event.key==='Enter'){event.preventDefault(); addPostComment();}"
+                  placeholder="Leave a quick note or approval..."
+                  class="flex-1 px-3 py-1.5 text-xs surface-card border rounded-lg text-ink focus:outline-none focus:border-[var(--accent-primary)]"
+                />
+                <button
+                  type="button"
+                  onclick="addPostComment()"
+                  class="px-3 py-1.5 rounded-lg surface-card border hover:border-[var(--border-strong)] text-xs font-semibold text-ink transition cursor-pointer"
+                >
+                  Post
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Drawer Footer -->
+        <div class="px-5 py-3.5 border-t border-hairline flex flex-wrap items-center justify-between gap-2">
+          <div id="drawer-edit-actions" class="hidden flex items-center gap-2">
+            <button
+              type="button"
+              onclick="deleteEditingPost()"
+              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-rose-600 hover:bg-rose-500/10 border border-rose-500/20 transition cursor-pointer"
+            >
+              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+              <span>Delete</span>
+            </button>
+            <button
+              type="button"
+              onclick="duplicateEditingPost()"
+              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-ink-secondary surface-subtle border hover:border-[var(--border-strong)] transition cursor-pointer"
+            >
+              <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+              <span>Duplicate</span>
+            </button>
+          </div>
+
+          <div class="flex items-center gap-2 ml-auto">
+            <button
+              type="button"
+              onclick="closePostDrawer()"
+              class="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-ink-secondary hover:bg-[var(--bg-subtle)] transition cursor-pointer"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              form="post-form"
+              class="btn-terracotta inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer"
+            >
+              <i data-lucide="check" class="w-3.5 h-3.5"></i>
+              <span>Save Post</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- LINEAR-STYLE COMMAND PALETTE (Cmd+K / Ctrl+K) -->
+  <div id="command-modal" class="fixed inset-0 z-50 hidden items-start justify-center pt-16 sm:pt-24 px-4 bg-black/45" role="dialog" aria-modal="true">
+    <div class="surface-card border rounded-xl max-w-xl w-full overflow-hidden">
+      <div class="px-4 py-3 border-b border-hairline flex items-center gap-3">
+        <i data-lucide="search" class="w-4 h-4 text-ink-muted"></i>
+        <input
+          id="command-input"
+          type="text"
+          oninput="renderCommandResults()"
+          onkeydown="handleCommandKeydown(event)"
+          placeholder="Type a command or search scheduled posts..."
+          class="flex-1 bg-transparent text-sm text-ink focus:outline-none"
+        />
+        <kbd class="font-mono text-[10px] px-1.5 py-0.5 rounded surface-subtle border text-ink-muted">ESC</kbd>
+      </div>
+      <div id="command-results" class="max-h-80 overflow-y-auto p-2 space-y-1">
+        <!-- Populated dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- WORKSPACE SETTINGS MODAL (PROFILES, REAL-TIME FIREBASE SYNC & BACKUP) -->
+  <div id="workspace-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/45 overflow-y-auto" role="dialog" aria-modal="true">
+    <div class="surface-card border rounded-xl max-w-2xl w-full overflow-hidden my-8">
+      <!-- Modal Header -->
+      <div class="px-5 py-4 border-b border-hairline flex items-center justify-between">
+        <div>
+          <h3 class="text-base font-bold text-ink">Studio Workspace & Live Sync</h3>
+          <p class="text-xs text-ink-muted">Customize collaborator profiles, connect real-time cloud sync, or export backups</p>
+        </div>
+        <button onclick="closeWorkspaceModal()" aria-label="Close settings" class="p-1.5 rounded-lg text-ink-muted hover:text-ink hover:bg-[var(--bg-subtle)] cursor-pointer">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Modal Tabs -->
+      <div class="px-5 pt-2 border-b border-hairline surface-subtle flex gap-4 text-xs font-semibold">
+        <button id="ws-tab-profiles" onclick="switchWorkspaceTab('profiles')" class="py-2.5 border-b-2 border-[var(--accent-primary)] text-ink cursor-pointer">
+          Collaborator Profiles
+        </button>
+        <button id="ws-tab-sync" onclick="switchWorkspaceTab('sync')" class="py-2.5 border-b-2 border-transparent text-ink-muted hover:text-ink cursor-pointer">
+          Real-Time Cloud Sync
+        </button>
+        <button id="ws-tab-data" onclick="switchWorkspaceTab('data')" class="py-2.5 border-b-2 border-transparent text-ink-muted hover:text-ink cursor-pointer">
+          Export & Backup
+        </button>
+      </div>
+
+      <!-- TAB 1: COLLABORATOR PROFILES (RICK & BOYFRIEND) -->
+      <div id="ws-panel-profiles" class="p-5 space-y-4">
+        <p class="text-xs text-ink-secondary">
+          Personalize both creator badges so every post and note clearly shows who drafted or scheduled it.
+        </p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <!-- Creator 1 -->
+          <div class="p-4 rounded-xl surface-subtle border space-y-3">
+            <div class="flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold" style="background-color: #D94E34;">1</span>
+              <span class="text-xs font-bold text-ink">Creator One</span>
+            </div>
+            <div>
+              <label class="block font-mono text-[10px] uppercase text-ink-muted mb-1">Display Name</label>
+              <input id="profile-1-name" type="text" class="w-full px-3 py-1.5 text-sm surface-card border rounded-lg text-ink" />
+            </div>
+            <div>
+              <label class="block font-mono text-[10px] uppercase text-ink-muted mb-1">Badge Initials (2–3 chars)</label>
+              <input id="profile-1-initials" type="text" maxlength="3" class="w-full px-3 py-1.5 font-mono text-xs uppercase surface-card border rounded-lg text-ink" />
+            </div>
+          </div>
+
+          <!-- Creator 2 -->
+          <div class="p-4 rounded-xl surface-subtle border space-y-3">
+            <div class="flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold" style="background-color: #2563EB;">2</span>
+              <span class="text-xs font-bold text-ink">Creator Two (Partner)</span>
+            </div>
+            <div>
+              <label class="block font-mono text-[10px] uppercase text-ink-muted mb-1">Display Name</label>
+              <input id="profile-2-name" type="text" class="w-full px-3 py-1.5 text-sm surface-card border rounded-lg text-ink" />
+            </div>
+            <div>
+              <label class="block font-mono text-[10px] uppercase text-ink-muted mb-1">Badge Initials (2–3 chars)</label>
+              <input id="profile-2-initials" type="text" maxlength="3" class="w-full px-3 py-1.5 font-mono text-xs uppercase surface-card border rounded-lg text-ink" />
+            </div>
+          </div>
+        </div>
+
+        <div class="flex justify-end pt-2">
+          <button onclick="saveWorkspaceProfiles()" class="btn-terracotta px-4 py-2 rounded-lg text-xs font-semibold cursor-pointer">
+            Save Profiles
+          </button>
+        </div>
+      </div>
+
+      <!-- TAB 2: REAL-TIME FIREBASE FIRESTORE SYNC -->
+      <div id="ws-panel-sync" class="hidden p-5 space-y-4 max-h-[72vh] overflow-y-auto">
+        <div id="cloud-status-box" class="p-3.5 rounded-xl surface-subtle border flex items-center justify-between gap-3">
+          <div class="flex items-center gap-2.5">
+            <span id="cloud-box-dot" class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+            <div class="text-xs">
+              <p id="cloud-box-title" class="font-bold text-ink">Local Browser Storage Active</p>
+              <p id="cloud-box-desc" class="text-ink-muted">Connect a free Firebase Firestore project so both devices sync in real time.</p>
+            </div>
+          </div>
+          <button id="cloud-disconnect-btn" onclick="disconnectFirebase()" class="hidden px-2.5 py-1 rounded-lg text-xs font-semibold text-rose-600 border border-rose-500/30 hover:bg-rose-500/10 cursor-pointer">
+            Disconnect
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block font-mono text-[10px] uppercase text-ink-muted mb-1">Shared Room ID</label>
+            <input id="fb-room-input" type="text" value="our-content-studio" class="w-full px-3 py-2 font-mono text-xs surface-subtle border rounded-lg text-ink" />
+          </div>
+          <div class="flex items-end">
+            <button type="button" onclick="copyShareCredentials()" class="w-full px-3 py-2 rounded-lg surface-subtle border hover:border-[var(--border-strong)] text-xs font-semibold text-ink transition cursor-pointer">
+              Copy Room ID & Config for Partner
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-mono text-[10px] uppercase text-ink-muted mb-1">Firebase Web Config (JSON or JS Snippet)</label>
+          <textarea
+            id="fb-config-textarea"
+            rows="5"
+            placeholder='{ "apiKey": "...", "authDomain": "...", "projectId": "...", "appId": "..." }'
+            class="w-full px-3 py-2 font-mono text-xs surface-subtle border rounded-lg text-ink focus:outline-none focus:border-[var(--accent-primary)]"
+          ></textarea>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
+          <button
+            id="push-to-cloud-btn"
+            type="button"
+            onclick="pushAllLocalToFirestore()"
+            class="hidden px-3 py-1.5 rounded-lg surface-subtle border hover:border-[var(--border-strong)] text-xs font-semibold text-ink cursor-pointer"
+          >
+            Push Local Posts to Cloud
+          </button>
+          <button
+            type="button"
+            onclick="connectFirebaseFromUI()"
+            class="btn-terracotta ml-auto px-4 py-2 rounded-lg text-xs font-semibold cursor-pointer"
+          >
+            Connect Live Sync
+          </button>
+        </div>
+      </div>
+
+      <!-- TAB 3: EXPORT & BACKUP -->
+      <div id="ws-panel-data" class="hidden p-5 space-y-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <button onclick="exportCSV()" class="p-4 rounded-xl surface-subtle border hover:border-[var(--border-strong)] text-left transition cursor-pointer">
+            <p class="text-xs font-bold text-ink">Export Editorial CSV</p>
+            <p class="text-[11px] text-ink-muted mt-1">Download spreadsheet-ready schedule of all filtered posts.</p>
+          </button>
+
+          <button onclick="exportJSON()" class="p-4 rounded-xl surface-subtle border hover:border-[var(--border-strong)] text-left transition cursor-pointer">
+            <p class="text-xs font-bold text-ink">Download JSON Backup</p>
+            <p class="text-[11px] text-ink-muted mt-1">Full portable snapshot including partner comments & settings.</p>
+          </button>
+        </div>
+
+        <div class="p-4 rounded-xl surface-subtle border space-y-2.5">
+          <p class="text-xs font-bold text-ink">Restore or Merge JSON Backup</p>
+          <input
+            type="file"
+            accept=".json,application/json"
+            onchange="importJSONBackup(event)"
+            class="block w-full text-xs text-ink-secondary file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border file:border-hairline file:text-xs file:font-semibold file:surface-card file:text-ink cursor-pointer"
+          />
+        </div>
+
+        <div class="pt-2 border-t border-hairline flex items-center justify-between">
+          <span class="text-xs text-ink-muted">Need fresh sample posts to test layouts?</span>
+          <button onclick="resetToDemoPosts()" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-rose-600 border border-rose-500/30 hover:bg-rose-500/10 cursor-pointer">
+            Reset Demo Schedule
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION BAR (WITH UNDO SUPPORT) -->
+  <div id="toast-stack" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <script>
+    // =========================================================================
+    // STORAGE KEYS & DESIGN METADATA
+    // =========================================================================
+    const KEYS = {
+      POSTS: 'atelier_editorial_posts_v2',
+      PROFILES: 'atelier_workspace_profiles_v2',
+      THEME: 'atelier_theme_v2',
+      CLOUD: 'atelier_firebase_sync_v2',
+    };
+
+    const CHANNELS = {
+      'Instagram': { dot: '#E1306C', icon: 'instagram', limit: 2200, handle: '@atelier.studio' },
+      'TikTok': { dot: '#14B8A6', icon: 'music-2', limit: 2200, handle: '@atelier.creates' },
+      'YouTube': { dot: '#EF4444', icon: 'youtube', limit: 5000, handle: 'Atelier Studio' },
+      'LinkedIn': { dot: '#0A66C2', icon: 'linkedin', limit: 3000, handle: 'Atelier Editorial' },
+      'X / Twitter': { dot: '#64748B', icon: 'at-sign', limit: 280, handle: '@atelier_ed' },
+      'Blog / Newsletter': { dot: '#D97706', icon: 'book-open', limit: 10000, handle: 'The Sunday Dispatch' },
+    };
+
+    const STAGES = ['Idea', 'Drafting', 'In Review', 'Scheduled', 'Published'];
+
+    const STAGE_STYLES = {
+      'Idea': { dot: '#94A3B8', badge: 'bg-slate-500/10 text-slate-600 dark:text-slate-300 border-slate-500/20' },
+      'Drafting': { dot: '#F59E0B', badge: 'bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/20' },
+      'In Review': { dot: '#8B5CF6', badge: 'bg-purple-500/10 text-purple-700 dark:text-purple-300 border-purple-500/20' },
+      'Scheduled': { dot: '#2563EB', badge: 'bg-blue-500/10 text-blue-700 dark:text-blue-300 border-blue-500/20' },
+      'Published': { dot: '#10B981', badge: 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20' },
+    };
+
+    // =========================================================================
+    // DATE UTILITIES
+    // =========================================================================
+    function pad2(n) {
+      return String(n).padStart(2, '0');
+    }
+
+    function toYMD(year, monthIndex, day) {
+      const d = new Date(year, monthIndex, day);
+      return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+    }
+
+    function todayYMD() {
+      const now = new Date();
+      return toYMD(now.getFullYear(), now.getMonth(), now.getDate());
+    }
+
+    function parseYMD(ymd) {
+      const [y, m, d] = ymd.split('-').map(Number);
+      return new Date(y, m - 1, d);
+    }
+
+    function formatShortDate(ymd) {
+      if (!ymd) return '';
+      const d = parseYMD(ymd);
+      return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    }
+
+    function format12Hour(time24) {
+      if (!time24) return '';
+      const [hStr, mStr] = time24.split(':');
+      let h = parseInt(hStr, 10);
+      const suffix = h >= 12 ? 'PM' : 'AM';
+      h = h % 12 || 12;
+      return `${h}:${mStr} ${suffix}`;
+    }
+
+    // =========================================================================
+    // DEMO EDITORIAL DATA (NOVEMBER / DECEMBER 2026)
+    // =========================================================================
+    function buildDemoPosts() {
+      const now = new Date();
+      const y = now.getFullYear();
+      const m = now.getMonth();
+
+      return [
+        {
+          id: 'ed-101',
+          title: 'Morning Desk Reset & Analog Planning Ritual',
+          platform: 'Instagram',
+          format: 'Reel / Short',
+          pillar: 'Behind the Scenes',
+          status: 'Published',
+          date: toYMD(y, m, 3),
+          time: '09:00',
+          creatorId: 'c1',
+          caption: 'Before opening a single tab, we map the top three creative priorities on paper. Quiet mornings make sharper decisions.',
+          visualNotes: 'Overhead 4:5 shot, warm morning window light, espresso pour',
+          tags: '#MorningRitual #CreativeStudio #SlowProductivity',
+          comments: [
+            { authorId: 'c2', text: 'Love the warm color grade on the intro clip!', time: 'Nov 2' }
+          ]
+        },
+        {
+          id: 'ed-102',
+          title: '5 Framing Tweaks That Instantly Elevate Talking-Head Video',
+          platform: 'YouTube',
+          format: 'Video',
+          pillar: 'Educational',
+          status: 'Published',
+          date: toYMD(y, m, 7),
+          time: '14:00',
+          creatorId: 'c2',
+          caption: 'You do not need a cinema camera to look editorial. Here is how focal length, key-light angle, and background depth transform your frame.',
+          visualNotes: 'Side-by-side lighting comparison + studio diagram overlay',
+          tags: '#FilmmakingTips #CreatorSetup #StudioLighting',
+          comments: []
+        },
+        {
+          id: 'ed-103',
+          title: 'How We Batch 2 Weeks of Editorial Content in One Sunday',
+          platform: 'LinkedIn',
+          format: 'Carousel',
+          pillar: 'Educational',
+          status: 'Scheduled',
+          date: toYMD(y, m, 12),
+          time: '08:30',
+          creatorId: 'c1',
+          caption: 'Consistency comes from systems, not willpower. Swipe through our 4-step Sunday batching workflow from raw voice notes to scheduled posts.',
+          visualNotes: '6-slide minimalist cream & terracotta typography deck',
+          tags: '#ContentSystems #EditorialWorkflow #CreativeDirection',
+          comments: [
+            { authorId: 'c2', text: 'Slide 4 flow diagram looks super crisp—approved!', time: 'Yesterday' }
+          ]
+        },
+        {
+          id: 'ed-104',
+          title: 'Weekend Coffee Walk & Q4 Creative Reflections',
+          platform: 'TikTok',
+          format: 'Reel / Short',
+          pillar: 'Lifestyle',
+          status: 'Scheduled',
+          date: toYMD(y, m, 15),
+          time: '11:30',
+          creatorId: 'c2',
+          caption: 'Stepping away from the screen for an hour always unblocks the best campaign ideas. What are you building this week?',
+          visualNotes: 'Handheld walk-and-talk, natural street ambience',
+          tags: '#WeekendReset #CreativeLife #DayInTheLife',
+          comments: []
+        },
+        {
+          id: 'ed-105',
+          title: 'The Sunday Dispatch #42: Designing Calm Digital Spaces',
+          platform: 'Blog / Newsletter',
+          format: 'Article',
+          pillar: 'Storytelling',
+          status: 'In Review',
+          date: toYMD(y, m, 19),
+          time: '08:00',
+          creatorId: 'c1',
+          caption: 'Why noisy interfaces exhaust creative teams—and how stripping away visual clutter helped us double our publishing cadence.',
+          visualNotes: 'Hero editorial illustration + pull-quote cards',
+          tags: '#DesignThinking #CalmTech #Newsletter',
+          comments: [
+            { authorId: 'c2', text: 'Let us tighten the second paragraph before scheduling.', time: '2h ago' }
+          ]
+        },
+        {
+          id: 'ed-106',
+          title: 'What Is In Our Travel Camera Pouch (2026 Edition)',
+          platform: 'Instagram',
+          format: 'Carousel',
+          pillar: 'Behind the Scenes',
+          status: 'Scheduled',
+          date: toYMD(y, m, 22),
+          time: '10:30',
+          creatorId: 'c2',
+          caption: 'Every lens, compact mic, and SSD we pack when shooting on location without checking a heavy bag.',
+          visualNotes: 'Flat-lay on linen backdrop with numbered callouts',
+          tags: '#WhatsInMyBag #MinimalistGear #CreatorEssentials',
+          comments: []
+        },
+        {
+          id: 'ed-107',
+          title: 'Quick Tip: Color-Coding Content Pillars for Balanced Feeds',
+          platform: 'X / Twitter',
+          format: 'Single Post',
+          pillar: 'Educational',
+          status: 'Scheduled',
+          date: toYMD(y, m, 25),
+          time: '13:00',
+          creatorId: 'c1',
+          caption: 'If every post is a promo, your audience tunes out.\n\nWe balance our calendar with a 40/30/20/10 split:\n• 40% Educational\n• 30% Behind the Scenes\n• 20% Storytelling\n• 10% Product / Promo',
+          visualNotes: 'Clean screenshot of our Atelier color-coded calendar',
+          tags: '#ContentStrategy #CreatorEconomy',
+          comments: []
+        },
+        {
+          id: 'ed-108',
+          title: 'Late-Night Editing Session & Color LUT Walkthrough',
+          platform: 'TikTok',
+          format: 'Reel / Short',
+          pillar: 'Behind the Scenes',
+          status: 'Drafting',
+          date: toYMD(y, m, 27),
+          time: '18:00',
+          creatorId: 'c2',
+          caption: 'Before & after grading our autumn studio footage in 30 seconds.',
+          visualNotes: 'Screen recording + over-the-shoulder monitor shot',
+          tags: '#ColorGrading #EditingWorkflow #BehindTheScenes',
+          comments: []
+        },
+        {
+          id: 'ed-109',
+          title: 'Limited Studio Print Drop — Early Access Announcement',
+          platform: 'Instagram',
+          format: 'Story',
+          pillar: 'Product / Promo',
+          status: 'In Review',
+          date: toYMD(y, m, 29),
+          time: '12:00',
+          creatorId: 'c1',
+          caption: 'Subscribers get 24-hour early access tomorrow at noon. Tap the reminder sticker so you do not miss out.',
+          visualNotes: '3-frame vertical story sequence with countdown sticker',
+          tags: '#StudioDrop #LimitedEdition',
+          comments: []
+        },
+        {
+          id: 'ed-110',
+          title: 'December Editorial Kickoff & Year-End Wrap Brainstorm',
+          platform: 'YouTube',
+          format: 'Video',
+          pillar: 'Storytelling',
+          status: 'Idea',
+          date: toYMD(y, m + 1, 2),
+          time: '15:00',
+          creatorId: 'c1',
+          caption: 'Reflecting on our favorite projects of 2026 and sharing what we are building together in the new year.',
+          visualNotes: 'Two-person studio conversation setup',
+          tags: '#YearInReview #CreativePartners #2027Goals',
+          comments: []
+        }
+      ];
+    }
+
+    // =========================================================================
+    // APPLICATION STATE
+    // =========================================================================
+    let app = {
+      posts: [],
+      profiles: {
+        activeId: 'c1',
+        c1: { id: 'c1', name: 'Rick', initials: 'RC', color: '#D94E34' },
+        c2: { id: 'c2', name: 'Partner', initials: 'BF', color: '#2563EB' },
+      },
+      view: 'month', // 'month' | 'week' | 'board' | 'table'
+      anchorDate: new Date(),
+      filters: {
+        creator: 'All',
+        platform: 'All',
+        pillar: 'All',
+        status: 'All',
+      },
+      sort: { field: 'date', asc: true },
+      dragPostId: null,
+      quickAddDate: null,
+      editingPostId: null,
+      commandSelectedIndex: 0,
+      lastUndoSnapshot: null,
+      cloud: {
+        connected: false,
+        roomId: 'our-content-studio',
+        config: null,
+        db: null,
+        api: null,
+        unsubscribe: null,
+      },
+    };
+
+    // =========================================================================
+    // BOOTSTRAP & PERSISTENCE
+    // =========================================================================
+    async function bootStudio() {
+      applySavedTheme();
+      loadProfiles();
+      loadPosts();
+
+      const now = new Date();
+      app.anchorDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+      renderCreatorControls();
+      setView('month');
+      await attemptAutoFirebaseConnect();
+    }
+
+    function applySavedTheme() {
+      const savedTheme = localStorage.getItem(KEYS.THEME) || 'light';
+      const isDark = savedTheme === 'dark';
+      document.documentElement.classList.toggle('dark', isDark);
+      const icon = document.getElementById('theme-icon');
+      if (icon) icon.setAttribute('data-lucide', isDark ? 'sun' : 'moon');
+    }
+
+    function toggleTheme() {
+      const isDark = document.documentElement.classList.toggle('dark');
+      localStorage.setItem(KEYS.THEME, isDark ? 'dark' : 'light');
+      const icon = document.getElementById('theme-icon');
+      if (icon) icon.setAttribute('data-lucide', isDark ? 'sun' : 'moon');
+      lucide.createIcons();
+    }
+
+    function loadProfiles() {
+      try {
+        const raw = localStorage.getItem(KEYS.PROFILES);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && parsed.c1 && parsed.c2) {
+            app.profiles = parsed;
+          }
+        }
+      } catch (e) {
+        console.warn('Profile load fallback:', e);
+      }
+    }
+
+    function saveProfiles() {
+      localStorage.setItem(KEYS.PROFILES, JSON.stringify(app.profiles));
+    }
+
+    function loadPosts() {
+      try {
+        const raw = localStorage.getItem(KEYS.POSTS);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed)) {
+            app.posts = parsed;
+            return;
+          }
+        }
+      } catch (e) {
+        console.warn('Posts load fallback:', e);
+      }
+      app.posts = buildDemoPosts();
+      savePostsLocal();
+    }
+
+    function savePostsLocal() {
+      localStorage.setItem(KEYS.POSTS, JSON.stringify(app.posts));
+    }
+
+    function captureUndoSnapshot() {
+      app.lastUndoSnapshot = JSON.parse(JSON.stringify(app.posts));
+    }
+
+    async function restoreUndoSnapshot() {
+      if (!app.lastUndoSnapshot) return;
+      app.posts = app.lastUndoSnapshot;
+      app.lastUndoSnapshot = null;
+      savePostsLocal();
+      if (app.cloud.connected) {
+        await pushAllLocalToFirestore(true);
+      }
+      renderWorkspace();
+      showToast('Change undone.', { type: 'info' });
+    }
+
+    async function syncPostUpsert(post) {
+      savePostsLocal();
+      if (app.cloud.connected && app.cloud.db && app.cloud.api) {
+        try {
+          const { doc, setDoc } = app.cloud.api;
+          const ref = doc(app.cloud.db, 'workspaces', app.cloud.roomId, 'posts', post.id);
+          await setDoc(ref, { ...post, updatedAt: Date.now() });
+        } catch (err) {
+          console.error('Firestore write error:', err);
+          showToast('Saved locally (cloud sync check needed).', { type: 'error' });
+        }
+      }
+    }
+
+    async function syncPostDelete(postId) {
+      savePostsLocal();
+      if (app.cloud.connected && app.cloud.db && app.cloud.api) {
+        try {
+          const { doc, deleteDoc } = app.cloud.api;
+          const ref = doc(app.cloud.db, 'workspaces', app.cloud.roomId, 'posts', postId);
+          await deleteDoc(ref);
+        } catch (err) {
+          console.error('Firestore delete error:', err);
+        }
+      }
+    }
+
+    // =========================================================================
+    // CREATOR PROFILES & IDENTITY SWITCHER
+    // =========================================================================
+    function getCreator(creatorId) {
+      return app.profiles[creatorId] || app.profiles.c1;
+    }
+
+    function switchActiveCreator(creatorId) {
+      app.profiles.activeId = creatorId;
+      saveProfiles();
+      renderCreatorControls();
+      const user = getCreator(creatorId);
+      showToast(`Now editing as ${user.name} (${user.initials})`, { type: 'info' });
+    }
+
+    function setCreatorFilter(filterVal) {
+      app.filters.creator = filterVal;
+      renderCreatorControls();
+      applyFilters();
+    }
+
+    function renderCreatorControls() {
+      const { c1, c2, activeId } = app.profiles;
+
+      // Header active editor toggle
+      const switcher = document.getElementById('active-user-switcher');
+      switcher.innerHTML = [c1, c2]
+        .map((p) => {
+          const isActive = activeId === p.id;
+          return `
+            <button
+              type="button"
+              onclick="switchActiveCreator('${p.id}')"
+              class="inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-semibold transition cursor-pointer ${
+                isActive ? 'view-pill-active' : 'text-ink-muted hover:text-ink'
+              }"
+            >
+              <span class="w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-bold text-white" style="background-color: ${p.color};">
+                ${escapeHtml(p.initials)}
+              </span>
+              <span>${escapeHtml(p.name)}</span>
+            </button>
+          `;
+        })
+        .join('');
+
+      // Filter bar creator pills
+      const filterGroup = document.getElementById('creator-filter-group');
+      const filterOptions = [
+        { id: 'All', label: 'All' },
+        { id: 'c1', label: c1.initials },
+        { id: 'c2', label: c2.initials },
+      ];
+      filterGroup.innerHTML = filterOptions
+        .map((opt) => {
+          const active = app.filters.creator === opt.id;
+          return `
+            <button
+              type="button"
+              onclick="setCreatorFilter('${opt.id}')"
+              class="px-2.5 py-1 rounded-md font-mono text-[11px] font-semibold transition cursor-pointer ${
+                active ? 'view-pill-active' : 'text-ink-muted hover:text-ink'
+              }"
+            >
+              ${escapeHtml(opt.label)}
+            </button>
+          `;
+        })
+        .join('');
+
+      // Update Drawer creator dropdown options
+      const drawerSelect = document.getElementById('post-creator');
+      if (drawerSelect) {
+        const currentVal = drawerSelect.value || activeId;
+        drawerSelect.innerHTML = `
+          <option value="c1">${escapeHtml(c1.name)} (${escapeHtml(c1.initials)})</option>
+          <option value="c2">${escapeHtml(c2.name)} (${escapeHtml(c2.initials)})</option>
+        `;
+        drawerSelect.value = currentVal;
+      }
+    }
+
+    // =========================================================================
+    // FILTERING, VIEW SWITCHING & DATE NAVIGATION
+    // =========================================================================
+    function getFilteredPosts() {
+      return app.posts.filter((p) => {
+        if (app.filters.creator !== 'All' && p.creatorId !== app.filters.creator) return false;
+        if (app.filters.platform !== 'All' && p.platform !== app.filters.platform) return false;
+        if (app.filters.pillar !== 'All' && p.pillar !== app.filters.pillar) return false;
+        if (app.filters.status !== 'All' && p.status !== app.filters.status) return false;
+        return true;
+      });
+    }
+
+    function applyFilters() {
+      app.filters.platform = document.getElementById('filter-platform').value;
+      app.filters.pillar = document.getElementById('filter-pillar').value;
+      app.filters.status = document.getElementById('filter-status').value;
+
+      const hasFilter =
+        app.filters.creator !== 'All' ||
+        app.filters.platform !== 'All' ||
+        app.filters.pillar !== 'All' ||
+        app.filters.status !== 'All';
+
+      document.getElementById('clear-filters-btn').classList.toggle('hidden', !hasFilter);
+      renderWorkspace();
+    }
+
+    function resetFilters() {
+      app.filters = { creator: 'All', platform: 'All', pillar: 'All', status: 'All' };
+      document.getElementById('filter-platform').value = 'All';
+      document.getElementById('filter-pillar').value = 'All';
+      document.getElementById('filter-status').value = 'All';
+      document.getElementById('clear-filters-btn').classList.add('hidden');
+      renderCreatorControls();
+      renderWorkspace();
+    }
+
+    function setView(viewName) {
+      app.view = viewName;
+      ['month', 'week', 'board', 'table'].forEach((v) => {
+        const btn = document.getElementById(`view-btn-${v}`);
+        const sec = document.getElementById(`view-${v}`);
+        const isCurrent = v === viewName;
+        btn.classList.toggle('view-pill-active', isCurrent);
+        btn.classList.toggle('text-ink-secondary', !isCurrent);
+        sec.classList.toggle('hidden', !isCurrent);
+      });
+
+      const dateNav = document.getElementById('date-nav-group');
+      dateNav.classList.toggle('hidden', viewName === 'board' || viewName === 'table');
+
+      renderWorkspace();
+    }
+
+    function navigatePeriod(delta) {
+      if (app.view === 'week') {
+        app.anchorDate.setDate(app.anchorDate.getDate() + delta * 7);
+      } else {
+        app.anchorDate = new Date(app.anchorDate.getFullYear(), app.anchorDate.getMonth() + delta, 1);
+      }
+      renderWorkspace();
+    }
+
+    function jumpToToday() {
+      const now = new Date();
+      app.anchorDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      renderWorkspace();
+    }
+
+    // =========================================================================
+    // WORKSPACE RENDER ORCHESTRATOR
+    // =========================================================================
+    function renderWorkspace() {
+      renderPipelineStrip();
+      updatePeriodHeading();
+
+      if (app.view === 'month') renderMonthView();
+      if (app.view === 'week') renderWeekView();
+      if (app.view === 'board') renderBoardView();
+      if (app.view === 'table') renderTableView();
+
+      lucide.createIcons();
+    }
+
+    function updatePeriodHeading() {
+      const heading = document.getElementById('period-heading');
+      if (app.view === 'week') {
+        const start = getStartOfWeek(app.anchorDate);
+        const end = new Date(start);
+        end.setDate(start.getDate() + 6);
+        const startStr = start.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        const endStr = end.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        heading.textContent = `${startStr} – ${endStr}`;
+      } else {
+        heading.textContent = app.anchorDate.toLocaleDateString('en-US', {
+          month: 'long',
+          year: 'numeric',
+        });
+      }
+    }
+
+    function renderPipelineStrip() {
+      const visible = getFilteredPosts();
+      const counts = STAGES.map((st) => ({
+        stage: st,
+        count: visible.filter((p) => p.status === st).length,
+      }));
+
+      const strip = document.getElementById('pipeline-strip');
+      strip.innerHTML = `
+        <div class="flex flex-wrap items-center gap-3 sm:gap-4">
+          <span class="font-mono text-[11px] uppercase tracking-wider text-ink-muted">Pipeline (${visible.length}):</span>
+          ${counts
+            .map(
+              (c) => `
+              <span class="inline-flex items-center gap-1.5 text-xs">
+                <span class="w-1.5 h-1.5 rounded-full" style="background-color: ${STAGE_STYLES[c.stage].dot};"></span>
+                <span class="text-ink-secondary">${c.stage}</span>
+                <strong class="font-mono text-ink">${c.count}</strong>
+              </span>
+            `
+            )
+            .join('')}
+        </div>
+        <div class="hidden lg:flex items-center gap-3 font-mono text-[11px] text-ink-muted">
+          <span>Drag cards to reschedule</span>
+          <span>•</span>
+          <span>Click "+ Quick add" inside any day</span>
+        </div>
+      `;
+    }
+
+    // =========================================================================
+    // VIEW 1: MONTH GRID + INLINE QUICK-ADD + DRAG & DROP
+    // =========================================================================
+    function renderMonthView() {
+      const year = app.anchorDate.getFullYear();
+      const month = app.anchorDate.getMonth();
+      const firstWeekday = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const daysInPrev = new Date(year, month, 0).getDate();
+      const totalCells = Math.ceil((firstWeekday + daysInMonth) / 7) * 7;
+      const today = todayYMD();
+
+      const posts = getFilteredPosts();
+      const byDate = {};
+      posts.forEach((p) => {
+        if (!byDate[p.date]) byDate[p.date] = [];
+        byDate[p.date].push(p);
+      });
+      Object.values(byDate).forEach((arr) => arr.sort((a, b) => (a.time || '').localeCompare(b.time || '')));
+
+      let html = '';
+
+      for (let idx = 0; idx < totalCells; idx++) {
+        let cellY = year;
+        let cellM = month;
+        let day = 0;
+        let inMonth = true;
+
+        if (idx < firstWeekday) {
+          inMonth = false;
+          day = daysInPrev - (firstWeekday - 1 - idx);
+          cellM -= 1;
+          if (cellM < 0) {
+            cellM = 11;
+            cellY -= 1;
+          }
+        } else if (idx >= firstWeekday + daysInMonth) {
+          inMonth = false;
+          day = idx - (firstWeekday + daysInMonth) + 1;
+          cellM += 1;
+          if (cellM > 11) {
+            cellM = 0;
+            cellY += 1;
+          }
+        } else {
+          day = idx - firstWeekday + 1;
+        }
+
+        const dateStr = toYMD(cellY, cellM, day);
+        const isToday = dateStr === today;
+        const dayPosts = byDate[dateStr] || [];
+        const isQuickAdding = app.quickAddDate === dateStr;
+
+        html += `
+          <div
+            data-date="${dateStr}"
+            ondragover="onCellDragOver(event)"
+            ondragleave="onCellDragLeave(event)"
+            ondrop="onMonthCellDrop(event, '${dateStr}')"
+            class="group min-h-[132px] sm:min-h-[152px] p-2 flex flex-col transition-colors ${
+              inMonth ? '' : 'opacity-50'
+            }"
+            style="background-color: ${inMonth ? 'var(--bg-surface)' : 'var(--bg-subtle)'};"
+          >
+            <!-- Day Header -->
+            <div class="flex items-center justify-between mb-1.5">
+              <span
+                class="font-mono text-xs w-6 h-6 rounded-md flex items-center justify-center ${
+                  isToday ? 'text-white font-bold' : 'text-ink-secondary font-medium'
+                }"
+                style="${isToday ? 'background-color: var(--accent-primary);' : ''}"
+              >
+                ${day}
+              </span>
+
+              <button
+                type="button"
+                onclick="activateInlineQuickAdd(event, '${dateStr}')"
+                class="opacity-0 group-hover:opacity-100 focus:opacity-100 inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[11px] font-medium text-ink-muted hover:text-ink hover:bg-[var(--bg-subtle)] transition cursor-pointer"
+              >
+                <i data-lucide="plus" class="w-3 h-3"></i>
+                <span class="hidden sm:inline">Quick add</span>
+              </button>
+            </div>
+
+            <!-- Inline Quick-Add Input (when active on this cell) -->
+            ${
+              isQuickAdding
+                ? `<div class="mb-1.5" onclick="event.stopPropagation()">
+                    <input
+                      id="inline-quick-input"
+                      type="text"
+                      placeholder="Post title + Enter..."
+                      onkeydown="handleInlineQuickKey(event, '${dateStr}')"
+                      onblur="cancelInlineQuickAdd()"
+                      class="w-full px-2 py-1 text-xs surface-subtle border rounded-md text-ink focus:outline-none focus:border-[var(--accent-primary)]"
+                    />
+                  </div>`
+                : ''
+            }
+
+            <!-- Post Pills -->
+            <div class="flex-1 space-y-1 overflow-y-auto max-h-[185px]">
+              ${dayPosts.map((p) => renderMonthPill(p)).join('')}
+            </div>
+          </div>
+        `;
+      }
+
+      document.getElementById('month-grid').innerHTML = html;
+
+      if (app.quickAddDate) {
+        const inp = document.getElementById('inline-quick-input');
+        if (inp) inp.focus();
+      }
+    }
+
+    function renderMonthPill(post) {
+      const ch = CHANNELS[post.platform] || CHANNELS['Instagram'];
+      const st = STAGE_STYLES[post.status] || STAGE_STYLES['Idea'];
+      const creator = getCreator(post.creatorId);
+
+      return `
+        <div
+          draggable="true"
+          ondragstart="onPostDragStart(event, '${post.id}')"
+          ondragend="onPostDragEnd(event)"
+          onclick="openPostDrawer('${post.id}')"
+          title="${escapeHtml(post.title)} • ${post.platform} (${post.status})"
+          class="px-2 py-1.5 rounded-lg surface-subtle border hover:border-[var(--border-strong)] transition cursor-grab active:cursor-grabbing select-none"
+        >
+          <div class="flex items-center justify-between gap-1 mb-0.5">
+            <div class="flex items-center gap-1.5 min-w-0">
+              <span class="w-2 h-2 rounded-full shrink-0" style="background-color: ${ch.dot};"></span>
+              <span class="font-mono text-[10px] text-ink-muted truncate">${post.time || '10:00'}</span>
+            </div>
+            <div class="flex items-center gap-1 shrink-0">
+              <span class="w-1.5 h-1.5 rounded-full" style="background-color: ${st.dot};" title="${post.status}"></span>
+              <span class="font-mono text-[9px] font-bold px-1 rounded text-white" style="background-color: ${creator.color};">
+                ${escapeHtml(creator.initials)}
+              </span>
+            </div>
+          </div>
+          <p class="text-xs font-semibold text-ink leading-snug line-clamp-1">
+            ${escapeHtml(post.title)}
+          </p>
+        </div>
+      `;
+    }
+
+    function activateInlineQuickAdd(event, dateStr) {
+      event.stopPropagation();
+      app.quickAddDate = dateStr;
+      renderMonthView();
+      lucide.createIcons();
+    }
+
+    function cancelInlineQuickAdd() {
+      app.quickAddDate = null;
+      renderMonthView();
+      lucide.createIcons();
+    }
+
+    function handleInlineQuickKey(event, dateStr) {
+      if (event.key === 'Escape') {
+        cancelInlineQuickAdd();
+        return;
+      }
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        const title = event.target.value.trim();
+        if (!title) {
+          cancelInlineQuickAdd();
+          return;
+        }
+
+        captureUndoSnapshot();
+        const newPost = {
+          id: 'ed-' + Date.now(),
+          title,
+          platform: app.filters.platform !== 'All' ? app.filters.platform : 'Instagram',
+          format: 'Reel / Short',
+          pillar: app.filters.pillar !== 'All' ? app.filters.pillar : 'Educational',
+          status: 'Idea',
+          date: dateStr,
+          time: '10:00',
+          creatorId: app.profiles.activeId,
+          caption: '',
+          visualNotes: '',
+          tags: '',
+          comments: [],
+        };
+
+        app.posts.push(newPost);
+        app.quickAddDate = null;
+        syncPostUpsert(newPost);
+        renderWorkspace();
+        showToast(`Added "${title}" on ${formatShortDate(dateStr)}`, { undoable: true });
+      }
+    }
+
+    // =========================================================================
+    // VIEW 2: WEEK & FOCUS TIMELINE VIEW
+    // =========================================================================
+    function getStartOfWeek(dateObj) {
+      const d = new Date(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate());
+      d.setDate(d.getDate() - d.getDay());
+      return d;
+    }
+
+    function renderWeekView() {
+      const start = getStartOfWeek(app.anchorDate);
+      const today = todayYMD();
+      const posts = getFilteredPosts();
+
+      let html = '';
+
+      for (let i = 0; i < 7; i++) {
+        const dayDate = new Date(start);
+        dayDate.setDate(start.getDate() + i);
+        const dateStr = toYMD(dayDate.getFullYear(), dayDate.getMonth(), dayDate.getDate());
+        const isToday = dateStr === today;
+        const dayName = dayDate.toLocaleDateString('en-US', { weekday: 'short' });
+        const dayNum = dayDate.getDate();
+
+        const dayPosts = posts
+          .filter((p) => p.date === dateStr)
+          .sort((a, b) => (a.time || '').localeCompare(b.time || ''));
+
+        html += `
+          <div
+            ondragover="onCellDragOver(event)"
+            ondragleave="onCellDragLeave(event)"
+            ondrop="onMonthCellDrop(event, '${dateStr}')"
+            class="surface-card border rounded-xl p-3 flex flex-col min-h-[460px] transition-colors"
+          >
+            <!-- Day Column Header -->
+            <div class="pb-2.5 mb-3 border-b border-hairline flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="font-mono text-xs uppercase text-ink-muted">${dayName}</span>
+                <span
+                  class="font-mono text-xs w-6 h-6 rounded-md flex items-center justify-center font-bold ${
+                    isToday ? 'text-white' : 'text-ink'
+                  }"
+                  style="${isToday ? 'background-color: var(--accent-primary);' : ''}"
+                >
+                  ${dayNum}
+                </span>
+              </div>
+              <button
+                onclick="openPostDrawer(null, '${dateStr}')"
+                title="Add post on ${formatShortDate(dateStr)}"
+                class="p-1 rounded-md text-ink-muted hover:text-ink hover:bg-[var(--bg-subtle)] cursor-pointer"
+              >
+                <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+
+            <!-- Fuller Focus Cards -->
+            <div class="flex-1 space-y-2.5">
+              ${
+                dayPosts.length > 0
+                  ? dayPosts.map((p) => renderWeekCard(p)).join('')
+                  : `<div class="h-24 rounded-lg border border-dashed border-hairline flex items-center justify-center font-mono text-[11px] text-ink-muted">
+                      Open slot
+                    </div>`
+              }
+            </div>
+          </div>
+        `;
+      }
+
+      document.getElementById('week-grid').innerHTML = html;
+    }
+
+    function renderWeekCard(post) {
+      const ch = CHANNELS[post.platform] || CHANNELS['Instagram'];
+      const st = STAGE_STYLES[post.status] || STAGE_STYLES['Idea'];
+      const creator = getCreator(post.creatorId);
+
+      return `
+        <div
+          draggable="true"
+          ondragstart="onPostDragStart(event, '${post.id}')"
+          ondragend="onPostDragEnd(event)"
+          onclick="openPostDrawer('${post.id}')"
+          class="p-3 rounded-xl surface-subtle border hover:border-[var(--border-strong)] transition cursor-grab active:cursor-grabbing space-y-2"
+        >
+          <div class="flex items-center justify-between gap-1">
+            <span class="inline-flex items-center gap-1.5 text-[11px] font-semibold text-ink-secondary">
+              <span class="w-2 h-2 rounded-full" style="background-color: ${ch.dot};"></span>
+              <span>${escapeHtml(post.platform)}</span>
+            </span>
+            <span class="font-mono text-[10px] text-ink-muted">${format12Hour(post.time)}</span>
+          </div>
+
+          <h4 class="text-xs font-bold text-ink leading-snug">${escapeHtml(post.title)}</h4>
+
+          ${
+            post.caption
+              ? `<p class="text-[11px] text-ink-secondary line-clamp-2 leading-relaxed">${escapeHtml(post.caption)}</p>`
+              : ''
+          }
+
+          <div class="pt-2 border-t border-hairline flex items-center justify-between gap-1">
+            <span class="font-mono text-[10px] px-1.5 py-0.5 rounded border ${st.badge}">
+              ${post.status}
+            </span>
+            <span class="font-mono text-[10px] font-bold px-1.5 py-0.5 rounded text-white" style="background-color: ${creator.color};">
+              ${escapeHtml(creator.initials)}
+            </span>
+          </div>
+        </div>
+      `;
+    }
+
+    // =========================================================================
+    // VIEW 3: WORKFLOW KANBAN BOARD VIEW
+    // =========================================================================
+    function renderBoardView() {
+      const posts = getFilteredPosts();
+      const board = document.getElementById('board-grid');
+
+      board.innerHTML = STAGES.map((stage) => {
+        const st = STAGE_STYLES[stage];
+        const colPosts = posts
+          .filter((p) => p.status === stage)
+          .sort((a, b) => a.date.localeCompare(b.date));
+
+        return `
+          <div
+            ondragover="onCellDragOver(event)"
+            ondragleave="onCellDragLeave(event)"
+            ondrop="onBoardColumnDrop(event, '${stage}')"
+            class="surface-subtle border rounded-xl p-3 flex flex-col min-h-[520px] transition-colors"
+          >
+            <div class="flex items-center justify-between mb-3 px-1">
+              <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full" style="background-color: ${st.dot};"></span>
+                <h3 class="text-xs font-bold uppercase tracking-wider text-ink">${stage}</h3>
+                <span class="font-mono text-[11px] px-1.5 py-0.2 rounded surface-card border text-ink-muted">
+                  ${colPosts.length}
+                </span>
+              </div>
+              <button
+                onclick="openPostDrawer(null, null, '${stage}')"
+                title="Add post to ${stage}"
+                class="p-1 rounded text-ink-muted hover:text-ink hover:bg-[var(--bg-surface)] cursor-pointer"
+              >
+                <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+
+            <div class="flex-1 space-y-2.5">
+              ${colPosts.map((p) => renderBoardCard(p)).join('')}
+            </div>
+
+            <button
+              onclick="openPostDrawer(null, null, '${stage}')"
+              class="mt-3 w-full py-1.5 rounded-lg border border-dashed border-hairline hover:border-[var(--border-strong)] text-xs font-medium text-ink-muted hover:text-ink transition cursor-pointer"
+            >
+              + Add card
+            </button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderBoardCard(post) {
+      const ch = CHANNELS[post.platform] || CHANNELS['Instagram'];
+      const creator = getCreator(post.creatorId);
+      const notesCount = Array.isArray(post.comments) ? post.comments.length : 0;
+
+      return `
+        <div
+          draggable="true"
+          ondragstart="onPostDragStart(event, '${post.id}')"
+          ondragend="onPostDragEnd(event)"
+          onclick="openPostDrawer('${post.id}')"
+          class="surface-card border rounded-xl p-3 hover:border-[var(--border-strong)] transition cursor-grab active:cursor-grabbing space-y-2.5"
+        >
+          <div class="flex items-center justify-between gap-2">
+            <span class="inline-flex items-center gap-1.5 text-[11px] font-semibold text-ink-secondary">
+              <span class="w-2 h-2 rounded-full" style="background-color: ${ch.dot};"></span>
+              <span>${escapeHtml(post.platform)}</span>
+            </span>
+            <span class="font-mono text-[10px] text-ink-muted">${escapeHtml(post.format)}</span>
+          </div>
+
+          <h4 class="text-xs sm:text-sm font-bold text-ink leading-snug">${escapeHtml(post.title)}</h4>
+
+          <div class="flex flex-wrap items-center gap-1.5">
+            <span class="font-mono text-[10px] px-1.5 py-0.5 rounded surface-subtle border text-ink-secondary">
+              ${escapeHtml(post.pillar)}
+            </span>
+            ${
+              notesCount > 0
+                ? `<span class="inline-flex items-center gap-1 font-mono text-[10px] px-1.5 py-0.5 rounded surface-subtle border text-ink-muted">
+                    <i data-lucide="message-square" class="w-2.5 h-2.5"></i> ${notesCount}
+                  </span>`
+                : ''
+            }
+          </div>
+
+          <div class="pt-2 border-t border-hairline flex items-center justify-between text-[11px] text-ink-muted">
+            <span class="font-mono">${formatShortDate(post.date)}</span>
+            <div class="inline-flex items-center gap-1.5">
+              <span class="text-ink-secondary font-medium">${escapeHtml(creator.name)}</span>
+              <span class="font-mono text-[9px] font-bold px-1.5 py-0.5 rounded text-white" style="background-color: ${creator.color};">
+                ${escapeHtml(creator.initials)}
+              </span>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // =========================================================================
+    // VIEW 4: EDITORIAL TABLE VIEW (INLINE STAGE & CREATOR EDITING)
+    // =========================================================================
+    function toggleTableSort(field) {
+      if (app.sort.field === field) {
+        app.sort.asc = !app.sort.asc;
+      } else {
+        app.sort.field = field;
+        app.sort.asc = true;
+      }
+      renderTableView();
+      lucide.createIcons();
+    }
+
+    function renderTableView() {
+      const tbody = document.getElementById('table-body');
+      const emptyEl = document.getElementById('table-empty');
+      let list = [...getFilteredPosts()];
+
+      const { field, asc } = app.sort;
+      list.sort((a, b) => {
+        let va = (a[field] || '').toLowerCase();
+        let vb = (b[field] || '').toLowerCase();
+        if (field === 'date') {
+          va = `${a.date} ${a.time || ''}`;
+          vb = `${b.date} ${b.time || ''}`;
+        }
+        return asc ? va.localeCompare(vb) : vb.localeCompare(va);
+      });
+
+      if (list.length === 0) {
+        tbody.innerHTML = '';
+        emptyEl.classList.remove('hidden');
+        return;
+      }
+
+      emptyEl.classList.add('hidden');
+      const { c1, c2 } = app.profiles;
+
+      tbody.innerHTML = list
+        .map((post) => {
+          const ch = CHANNELS[post.platform] || CHANNELS['Instagram'];
+          const st = STAGE_STYLES[post.status] || STAGE_STYLES['Idea'];
+
+          return `
+            <tr class="hover:bg-[var(--bg-subtle)] transition-colors">
+              <td class="py-3 px-4 whitespace-nowrap font-mono text-xs">
+                <div class="font-semibold text-ink">${formatShortDate(post.date)}</div>
+                <div class="text-[11px] text-ink-muted">${format12Hour(post.time)}</div>
+              </td>
+
+              <td class="py-3 px-4 max-w-md">
+                <button onclick="openPostDrawer('${post.id}')" class="text-left text-xs sm:text-sm font-bold text-ink hover:underline cursor-pointer line-clamp-1">
+                  ${escapeHtml(post.title)}
+                </button>
+                ${post.tags ? `<p class="font-mono text-[10px] text-ink-muted truncate mt-0.5">${escapeHtml(post.tags)}</p>` : ''}
+              </td>
+
+              <td class="py-3 px-4 whitespace-nowrap">
+                <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-ink-secondary">
+                  <span class="w-2 h-2 rounded-full" style="background-color: ${ch.dot};"></span>
+                  <span>${escapeHtml(post.platform)}</span>
+                </span>
+              </td>
+
+              <td class="py-3 px-4 whitespace-nowrap">
+                <div class="text-xs font-medium text-ink">${escapeHtml(post.pillar)}</div>
+                <div class="font-mono text-[10px] text-ink-muted">${escapeHtml(post.format)}</div>
+              </td>
+
+              <!-- Inline Stage Selector -->
+              <td class="py-3 px-4 whitespace-nowrap">
+                <select
+                  onchange="inlineChangeStage('${post.id}', this.value)"
+                  aria-label="Stage for ${escapeHtml(post.title)}"
+                  class="font-mono text-[11px] font-semibold px-2.5 py-1 rounded-full border cursor-pointer focus:outline-none ${st.badge}"
+                >
+                  ${STAGES.map((s) => `<option value="${s}" ${post.status === s ? 'selected' : ''}>${s}</option>`).join('')}
+                </select>
+              </td>
+
+              <!-- Inline Creator Switcher -->
+              <td class="py-3 px-4 whitespace-nowrap">
+                <select
+                  onchange="inlineChangeCreator('${post.id}', this.value)"
+                  aria-label="Creator for ${escapeHtml(post.title)}"
+                  class="font-mono text-xs surface-subtle border rounded-lg px-2 py-1 text-ink cursor-pointer focus:outline-none"
+                >
+                  <option value="c1" ${post.creatorId === 'c1' ? 'selected' : ''}>${escapeHtml(c1.name)} (${escapeHtml(c1.initials)})</option>
+                  <option value="c2" ${post.creatorId === 'c2' ? 'selected' : ''}>${escapeHtml(c2.name)} (${escapeHtml(c2.initials)})</option>
+                </select>
+              </td>
+
+              <td class="py-3 px-4 whitespace-nowrap text-right">
+                <div class="inline-flex items-center gap-1">
+                  <button onclick="openPostDrawer('${post.id}')" title="Edit" class="p-1.5 rounded-lg text-ink-muted hover:text-ink hover:bg-[var(--bg-card)] cursor-pointer">
+                    <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                  </button>
+                  <button onclick="duplicatePostById('${post.id}')" title="Duplicate" class="p-1.5 rounded-lg text-ink-muted hover:text-ink hover:bg-[var(--bg-card)] cursor-pointer">
+                    <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  </button>
+                  <button onclick="deletePostById('${post.id}')" title="Delete" class="p-1.5 rounded-lg text-ink-muted hover:text-rose-600 cursor-pointer">
+                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          `;
+        })
+        .join('');
+    }
+
+    function inlineChangeStage(postId, newStage) {
+      const post = app.posts.find((p) => p.id === postId);
+      if (!post || post.status === newStage) return;
+      captureUndoSnapshot();
+      post.status = newStage;
+      syncPostUpsert(post);
+      renderWorkspace();
+      showToast(`Moved to ${newStage}`, { undoable: true });
+    }
+
+    function inlineChangeCreator(postId, newCreatorId) {
+      const post = app.posts.find((p) => p.id === postId);
+      if (!post || post.creatorId === newCreatorId) return;
+      post.creatorId = newCreatorId;
+      syncPostUpsert(post);
+      renderWorkspace();
+      showToast(`Assigned to ${getCreator(newCreatorId).name}`);
+    }
+
+    // =========================================================================
+    // HTML5 DRAG & DROP HANDLERS (CALENDAR, WEEK & BOARD)
+    // =========================================================================
+    function onPostDragStart(event, postId) {
+      app.dragPostId = postId;
+      event.dataTransfer.effectAllowed = 'move';
+      event.dataTransfer.setData('text/plain', postId);
+      setTimeout(() => event.target.classList.add('is-dragging'), 0);
+    }
+
+    function onPostDragEnd(event) {
+      app.dragPostId = null;
+      event.target.classList.remove('is-dragging');
+      document.querySelectorAll('.drag-over-target').forEach((el) => el.classList.remove('drag-over-target'));
+    }
+
+    function onCellDragOver(event) {
+      event.preventDefault();
+      event.dataTransfer.dropEffect = 'move';
+      event.currentTarget.classList.add('drag-over-target');
+    }
+
+    function onCellDragLeave(event) {
+      event.currentTarget.classList.remove('drag-over-target');
+    }
+
+    function onMonthCellDrop(event, targetDate) {
+      event.preventDefault();
+      event.currentTarget.classList.remove('drag-over-target');
+      const postId = event.dataTransfer.getData('text/plain') || app.dragPostId;
+      const post = app.posts.find((p) => p.id === postId);
+      if (post && post.date !== targetDate) {
+        captureUndoSnapshot();
+        post.date = targetDate;
+        syncPostUpsert(post);
+        renderWorkspace();
+        showToast(`Rescheduled to ${formatShortDate(targetDate)}`, { undoable: true });
+      }
+    }
+
+    function onBoardColumnDrop(event, targetStage) {
+      event.preventDefault();
+      event.currentTarget.classList.remove('drag-over-target');
+      const postId = event.dataTransfer.getData('text/plain') || app.dragPostId;
+      const post = app.posts.find((p) => p.id === postId);
+      if (post && post.status !== targetStage) {
+        captureUndoSnapshot();
+        post.status = targetStage;
+        syncPostUpsert(post);
+        renderWorkspace();
+        showToast(`Moved "${post.title}" to ${targetStage}`, { undoable: true });
+      }
+    }
+
+    // =========================================================================
+    // SLIDE-OVER STUDIO DRAWER + LIVE SOCIAL PREVIEW + COMMENTS
+    // =========================================================================
+    function openPostDrawer(postId = null, defaultDate = null, defaultStage = 'Idea') {
+      app.editingPostId = postId;
+      renderCreatorControls();
+
+      const editActions = document.getElementById('drawer-edit-actions');
+
+      if (postId) {
+        const post = app.posts.find((p) => p.id === postId);
+        if (!post) return;
+
+        document.getElementById('drawer-heading').textContent = post.title;
+        document.getElementById('drawer-badge').textContent = `Editing • ${post.platform}`;
+        editActions.classList.remove('hidden');
+
+        document.getElementById('post-id').value = post.id;
+        document.getElementById('post-title').value = post.title;
+        document.getElementById('post-platform').value = post.platform;
+        document.getElementById('post-format').value = post.format || 'Reel / Short';
+        document.getElementById('post-pillar').value = post.pillar || 'Educational';
+        document.getElementById('post-status').value = post.status;
+        document.getElementById('post-creator').value = post.creatorId || app.profiles.activeId;
+        document.getElementById('post-date').value = post.date;
+        document.getElementById('post-time').value = post.time || '10:00';
+        document.getElementById('post-caption').value = post.caption || '';
+        document.getElementById('post-visual-notes').value = post.visualNotes || '';
+        document.getElementById('post-tags').value = post.tags || '';
+
+        renderPostComments(post.comments || []);
+      } else {
+        document.getElementById('drawer-heading').textContent = 'New Editorial Post';
+        document.getElementById('drawer-badge').textContent = 'New Draft';
+        editActions.classList.add('hidden');
+
+        document.getElementById('post-id').value = '';
+        document.getElementById('post-title').value = '';
+        document.getElementById('post-platform').value =
+          app.filters.platform !== 'All' ? app.filters.platform : 'Instagram';
+        document.getElementById('post-format').value = 'Reel / Short';
+        document.getElementById('post-pillar').value =
+          app.filters.pillar !== 'All' ? app.filters.pillar : 'Educational';
+        document.getElementById('post-status').value = defaultStage || 'Idea';
+        document.getElementById('post-creator').value = app.profiles.activeId;
+        document.getElementById('post-date').value = defaultDate || todayYMD();
+        document.getElementById('post-time').value = '10:00';
+        document.getElementById('post-caption').value = '';
+        document.getElementById('post-visual-notes').value = '';
+        document.getElementById('post-tags').value = '';
+
+        renderPostComments([]);
+      }
+
+      updateLivePreview();
+      switchMobileDrawerPane('edit');
+
+      const drawer = document.getElementById('post-drawer');
+      const backdrop = document.getElementById('drawer-backdrop');
+      const sheet = document.getElementById('drawer-sheet');
+
+      drawer.classList.remove('hidden');
+      lucide.createIcons();
+
+      requestAnimationFrame(() => {
+        backdrop.classList.remove('opacity-0');
+        sheet.classList.remove('translate-x-full');
+      });
+
+      if (!postId) {
+        setTimeout(() => document.getElementById('post-title').focus(), 140);
+      }
+    }
+
+    function closePostDrawer() {
+      const drawer = document.getElementById('post-drawer');
+      const backdrop = document.getElementById('drawer-backdrop');
+      const sheet = document.getElementById('drawer-sheet');
+
+      backdrop.classList.add('opacity-0');
+      sheet.classList.add('translate-x-full');
+
+      setTimeout(() => {
+        drawer.classList.add('hidden');
+        app.editingPostId = null;
+      }, 240);
+    }
+
+    function switchMobileDrawerPane(pane) {
+      const formEl = document.getElementById('post-form');
+      const previewEl = document.getElementById('drawer-preview-pane');
+      const btnEdit = document.getElementById('mobile-tab-edit');
+      const btnPrev = document.getElementById('mobile-tab-preview');
+
+      if (window.innerWidth >= 1024) {
+        formEl.classList.remove('hidden');
+        previewEl.classList.remove('hidden');
+        previewEl.classList.add('flex');
+        return;
+      }
+
+      if (pane === 'preview') {
+        formEl.classList.add('hidden');
+        previewEl.classList.remove('hidden');
+        previewEl.classList.add('flex');
+        btnPrev.classList.add('view-pill-active');
+        btnEdit.classList.remove('view-pill-active');
+      } else {
+        formEl.classList.remove('hidden');
+        previewEl.classList.add('hidden');
+        previewEl.classList.remove('flex');
+        btnEdit.classList.add('view-pill-active');
+        btnPrev.classList.remove('view-pill-active');
+      }
+    }
+
+    function updateLivePreview() {
+      const title = document.getElementById('post-title').value.trim() || 'Untitled Editorial Post';
+      const platform = document.getElementById('post-platform').value;
+      const format = document.getElementById('post-format').value;
+      const pillar = document.getElementById('post-pillar').value;
+      const status = document.getElementById('post-status').value;
+      const creatorId = document.getElementById('post-creator').value;
+      const date = document.getElementById('post-date').value;
+      const time = document.getElementById('post-time').value;
+      const caption = document.getElementById('post-caption').value;
+      const visualNotes = document.getElementById('post-visual-notes').value.trim();
+      const tags = document.getElementById('post-tags').value.trim();
+
+      const ch = CHANNELS[platform] || CHANNELS['Instagram'];
+      const creator = getCreator(creatorId);
+
+      // Character limit meter
+      const meter = document.getElementById('char-limit-meter');
+      meter.textContent = `${caption.length} / ${ch.limit.toLocaleString()}`;
+      meter.style.color = caption.length > ch.limit ? '#E11D48' : 'var(--text-muted)';
+
+      // Mockup Card fields
+      const avatar = document.getElementById('mockup-avatar');
+      avatar.textContent = creator.initials;
+      avatar.style.backgroundColor = creator.color;
+
+      document.getElementById('mockup-handle').textContent = ch.handle;
+      document.getElementById('mockup-meta').textContent = `${platform} • ${format}`;
+      document.getElementById('mockup-status-pill').textContent = status;
+      document.getElementById('mockup-title-display').textContent = title;
+      document.getElementById('mockup-visual-display').textContent =
+        visualNotes || 'Add visual direction notes to preview shot brief';
+      document.getElementById('mockup-caption-display').textContent =
+        caption.trim() || 'Your caption preview will appear here as you type...';
+      document.getElementById('mockup-tags-display').textContent = tags;
+      document.getElementById('mockup-schedule-display').textContent = `${formatShortDate(date)} • ${format12Hour(time)}`;
+      document.getElementById('mockup-pillar-display').textContent = pillar;
+
+      const iconWrap = document.getElementById('mockup-platform-icon');
+      iconWrap.innerHTML = `<i data-lucide="${ch.icon}" class="w-4 h-4"></i>`;
+      lucide.createIcons();
+    }
+
+    function copyFormattedCaption() {
+      const caption = document.getElementById('post-caption').value.trim();
+      const tags = document.getElementById('post-tags').value.trim();
+      const combined = [caption, tags].filter(Boolean).join('\n\n');
+
+      if (!combined) {
+        showToast('Nothing to copy yet—write a caption first.', { type: 'info' });
+        return;
+      }
+
+      const helper = document.createElement('textarea');
+      helper.value = combined;
+      document.body.appendChild(helper);
+      helper.select();
+      document.execCommand('copy');
+      document.body.removeChild(helper);
+
+      showToast('Copied caption & hashtags to clipboard.');
+    }
+
+    // Partner Comments Thread inside Drawer
+    function renderPostComments(comments) {
+      const list = document.getElementById('comments-list');
+      const badge = document.getElementById('comment-count-badge');
+      badge.textContent = `${comments.length} ${comments.length === 1 ? 'note' : 'notes'}`;
+
+      if (comments.length === 0) {
+        list.innerHTML = `<p class="text-[11px] text-ink-muted italic py-2">No partner notes yet. Leave feedback or an approval below.</p>`;
+        return;
+      }
+
+      list.innerHTML = comments
+        .map((c) => {
+          const author = getCreator(c.authorId);
+          return `
+            <div class="p-2.5 rounded-lg surface-card border text-xs space-y-1">
+              <div class="flex items-center justify-between">
+                <div class="inline-flex items-center gap-1.5">
+                  <span class="font-mono text-[9px] font-bold px-1 rounded text-white" style="background-color: ${author.color};">
+                    ${escapeHtml(author.initials)}
+                  </span>
+                  <span class="font-semibold text-ink">${escapeHtml(author.name)}</span>
+                </div>
+                <span class="font-mono text-[10px] text-ink-muted">${escapeHtml(c.time || 'Just now')}</span>
+              </div>
+              <p class="text-ink-secondary leading-snug">${escapeHtml(c.text)}</p>
+            </div>
+          `;
+        })
+        .join('');
+    }
+
+    function addPostComment() {
+      const input = document.getElementById('new-comment-input');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const commentObj = {
+        authorId: app.profiles.activeId,
+        text,
+        time: new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
+      };
+
+      if (app.editingPostId) {
+        const post = app.posts.find((p) => p.id === app.editingPostId);
+        if (post) {
+          if (!Array.isArray(post.comments)) post.comments = [];
+          post.comments.push(commentObj);
+          syncPostUpsert(post);
+          renderPostComments(post.comments);
+          renderWorkspace();
+        }
+      } else {
+        // Store temporarily on window until new post is saved
+        if (!window._draftComments) window._draftComments = [];
+        window._draftComments.push(commentObj);
+        renderPostComments(window._draftComments);
+      }
+
+      input.value = '';
+    }
+
+    function handleSavePost(event) {
+      event.preventDefault();
+
+      const id = document.getElementById('post-id').value;
+      const title = document.getElementById('post-title').value.trim();
+      const platform = document.getElementById('post-platform').value;
+      const format = document.getElementById('post-format').value;
+      const pillar = document.getElementById('post-pillar').value;
+      const status = document.getElementById('post-status').value;
+      const creatorId = document.getElementById('post-creator').value;
+      const date = document.getElementById('post-date').value;
+      const time = document.getElementById('post-time').value;
+      const caption = document.getElementById('post-caption').value.trim();
+      const visualNotes = document.getElementById('post-visual-notes').value.trim();
+      const tags = document.getElementById('post-tags').value.trim();
+
+      if (!title || !date) return;
+
+      if (id) {
+        const idx = app.posts.findIndex((p) => p.id === id);
+        if (idx !== -1) {
+          app.posts[idx] = {
+            ...app.posts[idx],
+            title,
+            platform,
+            format,
+            pillar,
+            status,
+            creatorId,
+            date,
+            time,
+            caption,
+            visualNotes,
+            tags,
+          };
+          syncPostUpsert(app.posts[idx]);
+          showToast('Post updated.');
+        }
+      } else {
+        const newPost = {
+          id: 'ed-' + Date.now(),
+          title,
+          platform,
+          format,
+          pillar,
+          status,
+          creatorId,
+          date,
+          time,
+          caption,
+          visualNotes,
+          tags,
+          comments: window._draftComments || [],
+        };
+        window._draftComments = [];
+        app.posts.push(newPost);
+        syncPostUpsert(newPost);
+        showToast('Post scheduled.');
+      }
+
+      closePostDrawer();
+      renderWorkspace();
+    }
+
+    function duplicateEditingPost() {
+      const id = document.getElementById('post-id').value;
+      if (id) duplicatePostById(id);
+      closePostDrawer();
+    }
+
+    function duplicatePostById(postId) {
+      const orig = app.posts.find((p) => p.id === postId);
+      if (!orig) return;
+      const copy = {
+        ...JSON.parse(JSON.stringify(orig)),
+        id: 'ed-' + Date.now(),
+        title: `${orig.title} (Copy)`,
+        status: 'Drafting',
+      };
+      app.posts.push(copy);
+      syncPostUpsert(copy);
+      renderWorkspace();
+      showToast('Post duplicated.');
+    }
+
+    function deleteEditingPost() {
+      const id = document.getElementById('post-id').value;
+      if (id) deletePostById(id);
+      closePostDrawer();
+    }
+
+    function deletePostById(postId) {
+      const target = app.posts.find((p) => p.id === postId);
+      if (!target) return;
+      captureUndoSnapshot();
+      app.posts = app.posts.filter((p) => p.id !== postId);
+      syncPostDelete(postId);
+      renderWorkspace();
+      showToast(`Deleted "${target.title}"`, { undoable: true });
+    }
+
+    // =========================================================================
+    // COMMAND PALETTE (Cmd+K / Ctrl+K)
+    // =========================================================================
+    function openCommandPalette() {
+      const modal = document.getElementById('command-modal');
+      const input = document.getElementById('command-input');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      input.value = '';
+      app.commandSelectedIndex = 0;
+      renderCommandResults();
+      setTimeout(() => input.focus(), 40);
+    }
+
+    function closeCommandPalette() {
+      const modal = document.getElementById('command-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function getCommandItems() {
+      const q = document.getElementById('command-input').value.trim().toLowerCase();
+
+      const actions = [
+        { type: 'action', label: 'Create New Post', hint: 'N', icon: 'plus', run: () => openPostDrawer() },
+        { type: 'action', label: 'Jump to Today', hint: 'Calendar', icon: 'calendar-check', run: () => jumpToToday() },
+        { type: 'action', label: 'Switch to Month View', hint: 'View', icon: 'calendar', run: () => setView('month') },
+        { type: 'action', label: 'Switch to Week Focus View', hint: 'View', icon: 'columns-3', run: () => setView('week') },
+        { type: 'action', label: 'Switch to Workflow Board', hint: 'View', icon: 'kanban', run: () => setView('board') },
+        { type: 'action', label: 'Switch to Editorial Table', hint: 'View', icon: 'list', run: () => setView('table') },
+        { type: 'action', label: 'Toggle Warm Paper / Obsidian Theme', hint: 'Theme', icon: 'contrast', run: () => toggleTheme() },
+        { type: 'action', label: 'Open Live Cloud Sync & Profiles', hint: 'Settings', icon: 'cloud', run: () => openWorkspaceModal('sync') },
+      ];
+
+      const postMatches = app.posts
+        .filter(
+          (p) =>
+            !q ||
+            p.title.toLowerCase().includes(q) ||
+            p.platform.toLowerCase().includes(q) ||
+            (p.caption && p.caption.toLowerCase().includes(q)) ||
+            (p.tags && p.tags.toLowerCase().includes(q))
+        )
+        .slice(0, 8)
+        .map((p) => ({
+          type: 'post',
+          label: p.title,
+          hint: `${p.platform} • ${formatShortDate(p.date)}`,
+          icon: 'file-text',
+          run: () => openPostDrawer(p.id),
+        }));
+
+      const filteredActions = actions.filter((a) => !q || a.label.toLowerCase().includes(q));
+      return [...filteredActions, ...postMatches];
+    }
+
+    function renderCommandResults() {
+      const items = getCommandItems();
+      const container = document.getElementById('command-results');
+      if (app.commandSelectedIndex >= items.length) app.commandSelectedIndex = 0;
+
+      if (items.length === 0) {
+        container.innerHTML = `<p class="text-xs text-ink-muted text-center py-6">No matching commands or posts.</p>`;
+        return;
+      }
+
+      container.innerHTML = items
+        .map((item, idx) => {
+          const selected = idx === app.commandSelectedIndex;
+          return `
+            <button
+              type="button"
+              onclick="executeCommandIndex(${idx})"
+              class="w-full px-3 py-2 rounded-lg flex items-center justify-between text-left text-xs transition cursor-pointer ${
+                selected ? 'surface-subtle text-ink font-semibold' : 'text-ink-secondary hover:bg-[var(--bg-subtle)]'
+              }"
+            >
+              <span class="inline-flex items-center gap-2.5 truncate">
+                <i data-lucide="${item.icon}" class="w-3.5 h-3.5 shrink-0 text-ink-muted"></i>
+                <span class="truncate">${escapeHtml(item.label)}</span>
+              </span>
+              <span class="font-mono text-[10px] text-ink-muted shrink-0 ml-2">${escapeHtml(item.hint)}</span>
+            </button>
+          `;
+        })
+        .join('');
+
+      lucide.createIcons();
+    }
+
+    function executeCommandIndex(idx) {
+      const items = getCommandItems();
+      if (items[idx]) {
+        closeCommandPalette();
+        items[idx].run();
+      }
+    }
+
+    function handleCommandKeydown(event) {
+      const items = getCommandItems();
+      if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        app.commandSelectedIndex = (app.commandSelectedIndex + 1) % Math.max(1, items.length);
+        renderCommandResults();
+      } else if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        app.commandSelectedIndex = (app.commandSelectedIndex - 1 + items.length) % Math.max(1, items.length);
+        renderCommandResults();
+      } else if (event.key === 'Enter') {
+        event.preventDefault();
+        executeCommandIndex(app.commandSelectedIndex);
+      }
+    }
+
+    // =========================================================================
+    // WORKSPACE SETTINGS MODAL (PROFILES, FIREBASE SYNC & BACKUP)
+    // =========================================================================
+    function openWorkspaceModal(tab = 'profiles') {
+      document.getElementById('profile-1-name').value = app.profiles.c1.name;
+      document.getElementById('profile-1-initials').value = app.profiles.c1.initials;
+      document.getElementById('profile-2-name').value = app.profiles.c2.name;
+      document.getElementById('profile-2-initials').value = app.profiles.c2.initials;
+
+      updateSyncIndicators();
+      switchWorkspaceTab(tab);
+
+      const modal = document.getElementById('workspace-modal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      lucide.createIcons();
+    }
+
+    function closeWorkspaceModal() {
+      const modal = document.getElementById('workspace-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function switchWorkspaceTab(tab) {
+      ['profiles', 'sync', 'data'].forEach((t) => {
+        const btn = document.getElementById(`ws-tab-${t}`);
+        const panel = document.getElementById(`ws-panel-${t}`);
+        const active = t === tab;
+        btn.classList.toggle('border-[var(--accent-primary)]', active);
+        btn.classList.toggle('text-ink', active);
+        btn.classList.toggle('border-transparent', !active);
+        btn.classList.toggle('text-ink-muted', !active);
+        panel.classList.toggle('hidden', !active);
+      });
+    }
+
+    function saveWorkspaceProfiles() {
+      const n1 = document.getElementById('profile-1-name').value.trim() || 'Rick';
+      const i1 = (document.getElementById('profile-1-initials').value.trim() || 'RC').toUpperCase();
+      const n2 = document.getElementById('profile-2-name').value.trim() || 'Partner';
+      const i2 = (document.getElementById('profile-2-initials').value.trim() || 'BF').toUpperCase();
+
+      app.profiles.c1.name = n1;
+      app.profiles.c1.initials = i1;
+      app.profiles.c2.name = n2;
+      app.profiles.c2.initials = i2;
+
+      saveProfiles();
+      renderCreatorControls();
+      renderWorkspace();
+      showToast('Collaborator profiles updated.');
+    }
+
+    // =========================================================================
+    // FIREBASE FIRESTORE REAL-TIME SYNC
+    // =========================================================================
+    function parseFirebaseConfig(raw) {
+      const text = raw.trim();
+      if (!text) throw new Error('Paste your Firebase config object first.');
+      const start = text.indexOf('{');
+      const end = text.lastIndexOf('}');
+      if (start === -1 || end <= start) throw new Error('Invalid config format.');
+
+      const normalized = text
+        .slice(start, end + 1)
+        .replace(/([{,]\s*)([a-zA-Z0-9_]+)\s*:/g, '$1"$2":')
+        .replace(/,\s*}/g, '}')
+        .replace(/'/g, '"');
+
+      const parsed = JSON.parse(normalized);
+      if (!parsed.apiKey || !parsed.projectId) {
+        throw new Error('Config requires apiKey and projectId.');
+      }
+      return parsed;
+    }
+
+    async function connectFirestore(config, roomId, silent = false) {
+      try {
+        const appMod = await import('https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js');
+        const fsMod = await import('https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js');
+
+        if (typeof app.cloud.unsubscribe === 'function') {
+          app.cloud.unsubscribe();
+          app.cloud.unsubscribe = null;
+        }
+
+        const fbApp = appMod.initializeApp(config, `atelier-${config.projectId}-${Date.now()}`);
+        const db = fsMod.getFirestore(fbApp);
+        const cleanRoom = (roomId || 'our-content-studio')
+          .trim()
+          .toLowerCase()
+          .replace(/[^a-z0-9-_]/g, '-') || 'our-content-studio';
+
+        app.cloud = {
+          connected: true,
+          roomId: cleanRoom,
+          config,
+          db,
+          api: fsMod,
+          unsubscribe: null,
+        };
+
+        localStorage.setItem(KEYS.CLOUD, JSON.stringify({ config, roomId: cleanRoom }));
+        updateSyncIndicators();
+
+        const postsCol = fsMod.collection(db, 'workspaces', cleanRoom, 'posts');
+        app.cloud.unsubscribe = fsMod.onSnapshot(
+          postsCol,
+          (snapshot) => {
+            const incoming = [];
+            snapshot.forEach((docSnap) => {
+              const d = docSnap.data();
+              if (d && d.title && d.date) incoming.push({ ...d, id: docSnap.id });
+            });
+
+            if (incoming.length > 0) {
+              app.posts = incoming;
+              savePostsLocal();
+              renderWorkspace();
+            } else if (!silent && app.posts.length > 0) {
+              showToast('Connected! Click "Push Local Posts to Cloud" to seed this room.', { type: 'info' });
+            }
+          },
+          (err) => {
+            console.error('Snapshot listener error:', err);
+            showToast('Cloud sync error—check Firestore rules.', { type: 'error' });
+          }
+        );
+
+        if (!silent) {
+          showToast(`Live Sync connected to "${cleanRoom}"!`);
+        }
+      } catch (err) {
+        app.cloud.connected = false;
+        updateSyncIndicators();
+        if (!silent) {
+          showToast(`Sync failed: ${err.message}`, { type: 'error' });
+        }
+      }
+    }
+
+    async function attemptAutoFirebaseConnect() {
+      try {
+        const raw = localStorage.getItem(KEYS.CLOUD);
+        if (!raw) return;
+        const { config, roomId } = JSON.parse(raw);
+        if (config && config.apiKey) {
+          document.getElementById('fb-room-input').value = roomId || 'our-content-studio';
+          document.getElementById('fb-config-textarea').value = JSON.stringify(config, null, 2);
+          await connectFirestore(config, roomId, true);
+        }
+      } catch (e) {
+        console.warn('Auto-connect skipped:', e);
+      }
+    }
+
+    async function connectFirebaseFromUI() {
+      try {
+        const cfg = parseFirebaseConfig(document.getElementById('fb-config-textarea').value);
+        const room = document.getElementById('fb-room-input').value;
+        await connectFirestore(cfg, room, false);
+      } catch (err) {
+        showToast(err.message, { type: 'error' });
+      }
+    }
+
+    async function pushAllLocalToFirestore(silent = false) {
+      if (!app.cloud.connected || !app.cloud.db || !app.cloud.api) return;
+      try {
+        const { writeBatch, doc } = app.cloud.api;
+        const batch = writeBatch(app.cloud.db);
+        app.posts.forEach((p) => {
+          const ref = doc(app.cloud.db, 'workspaces', app.cloud.roomId, 'posts', p.id);
+          batch.set(ref, { ...p, updatedAt: Date.now() });
+        });
+        await batch.commit();
+        if (!silent) showToast(`Synced ${app.posts.length} posts to shared room.`);
+      } catch (err) {
+        console.error(err);
+        if (!silent) showToast('Failed to push posts to Firestore.', { type: 'error' });
+      }
+    }
+
+    function disconnectFirebase() {
+      if (typeof app.cloud.unsubscribe === 'function') app.cloud.unsubscribe();
+      app.cloud.connected = false;
+      app.cloud.db = null;
+      localStorage.removeItem(KEYS.CLOUD);
+      updateSyncIndicators();
+      showToast('Disconnected from cloud sync.', { type: 'info' });
+    }
+
+    function updateSyncIndicators() {
+      const dot = document.getElementById('sync-dot');
+      const text = document.getElementById('sync-text');
+      const boxDot = document.getElementById('cloud-box-dot');
+      const boxTitle = document.getElementById('cloud-box-title');
+      const boxDesc = document.getElementById('cloud-box-desc');
+      const discBtn = document.getElementById('cloud-disconnect-btn');
+      const pushBtn = document.getElementById('push-to-cloud-btn');
+
+      if (app.cloud.connected) {
+        dot.className = 'w-2 h-2 rounded-full bg-emerald-500 animate-pulse';
+        text.textContent = 'Live Synced';
+        boxDot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse';
+        boxTitle.textContent = `Connected to "${app.cloud.roomId}"`;
+        boxDesc.textContent = 'Real-time updates active across both devices.';
+        discBtn.classList.remove('hidden');
+        pushBtn.classList.remove('hidden');
+      } else {
+        dot.className = 'w-2 h-2 rounded-full bg-amber-500';
+        text.textContent = 'Local Mode';
+        boxDot.className = 'w-2.5 h-2.5 rounded-full bg-amber-500';
+        boxTitle.textContent = 'Local Browser Storage Active';
+        boxDesc.textContent = 'Connect a free Firebase Firestore project so both devices sync in real time.';
+        discBtn.classList.add('hidden');
+        pushBtn.classList.add('hidden');
+      }
+    }
+
+    function copyShareCredentials() {
+      const room = document.getElementById('fb-room-input').value.trim() || 'our-content-studio';
+      const cfg = document.getElementById('fb-config-textarea').value.trim();
+      const text = `Atelier Studio Shared Calendar\nRoom ID: ${room}\nFirebase Config:\n${cfg}`;
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      showToast('Copied Room ID & config for your partner.');
+    }
+
+    // =========================================================================
+    // CSV / JSON EXPORT, IMPORT & DEMO RESET
+    // =========================================================================
+    function exportCSV() {
+      const rows = getFilteredPosts();
+      if (rows.length === 0) {
+        showToast('No posts to export.', { type: 'info' });
+        return;
+      }
+      const headers = ['Date', 'Time', 'Title', 'Channel', 'Format', 'Pillar', 'Stage', 'Creator', 'Caption', 'Tags'];
+      const esc = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
+      const csv = [
+        headers.join(','),
+        ...rows.map((p) =>
+          [p.date, p.time, p.title, p.platform, p.format, p.pillar, p.status, getCreator(p.creatorId).name, p.caption, p.tags]
+            .map(esc)
+            .join(',')
+        ),
+      ].join('\n');
+
+      downloadFile(csv, `atelier-calendar-${todayYMD()}.csv`, 'text/csv;charset=utf-8;');
+      showToast(`Exported ${rows.length} posts as CSV.`);
+    }
+
+    function exportJSON() {
+      const payload = {
+        studio: 'Atelier Editorial Calendar',
+        exportedAt: new Date().toISOString(),
+        profiles: app.profiles,
+        posts: app.posts,
+      };
+      downloadFile(JSON.stringify(payload, null, 2), `atelier-backup-${todayYMD()}.json`, 'application/json');
+      showToast('Downloaded JSON backup.');
+    }
+
+    function importJSONBackup(event) {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          const importedPosts = Array.isArray(parsed) ? parsed : parsed.posts;
+          if (!Array.isArray(importedPosts)) throw new Error('Invalid JSON structure.');
+
+          captureUndoSnapshot();
+          const map = new Map(app.posts.map((p) => [p.id, p]));
+          importedPosts.forEach((p, idx) => {
+            if (p && p.title && p.date) {
+              const id = p.id || `ed-imp-${Date.now()}-${idx}`;
+              map.set(id, { ...p, id });
+            }
+          });
+          app.posts = Array.from(map.values());
+          savePostsLocal();
+          if (app.cloud.connected) await pushAllLocalToFirestore(true);
+          renderWorkspace();
+          closeWorkspaceModal();
+          showToast(`Imported ${importedPosts.length} posts.`, { undoable: true });
+        } catch (err) {
+          showToast(`Import failed: ${err.message}`, { type: 'error' });
+        } finally {
+          event.target.value = '';
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    async function resetToDemoPosts() {
+      captureUndoSnapshot();
+      app.posts = buildDemoPosts();
+      savePostsLocal();
+      if (app.cloud.connected) await pushAllLocalToFirestore(true);
+      resetFilters();
+      closeWorkspaceModal();
+      showToast('Demo editorial schedule restored.', { undoable: true });
+    }
+
+    function downloadFile(content, filename, mimeType) {
+      const blob = new Blob([content], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.setAttribute('download', filename);
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    // =========================================================================
+    // TOAST WITH UNDO ACTION & GLOBAL SHORTCUTS
+    // =========================================================================
+    function showToast(message, options = {}) {
+      const { undoable = false } = options;
+      const stack = document.getElementById('toast-stack');
+      const el = document.createElement('div');
+
+      el.className =
+        'pointer-events-auto surface-card border px-3.5 py-2.5 rounded-xl flex items-center gap-3 text-xs font-medium text-ink transition-all duration-200 translate-y-2 opacity-0';
+
+      el.innerHTML = `
+        <span>${escapeHtml(message)}</span>
+        ${
+          undoable
+            ? `<button type="button" class="font-mono text-[11px] font-bold px-2 py-0.5 rounded surface-subtle border hover:border-[var(--border-strong)] cursor-pointer" style="color: var(--accent-primary);">
+                Undo
+              </button>`
+            : ''
+        }
+      `;
+
+      if (undoable) {
+        const undoBtn = el.querySelector('button');
+        undoBtn.onclick = () => {
+          el.remove();
+          restoreUndoSnapshot();
+        };
+      }
+
+      stack.appendChild(el);
+      requestAnimationFrame(() => el.classList.remove('translate-y-2', 'opacity-0'));
+
+      setTimeout(() => {
+        el.classList.add('translate-y-2', 'opacity-0');
+        setTimeout(() => el.remove(), 220);
+      }, undoable ? 5000 : 3000);
+    }
+
+    function escapeHtml(str) {
+      if (str === null || str === undefined) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    // Global keyboard shortcuts: Cmd/Ctrl+K, N for new post, Escape to close
+    document.addEventListener('keydown', (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        const cmdModal = document.getElementById('command-modal');
+        if (cmdModal.classList.contains('hidden')) openCommandPalette();
+        else closeCommandPalette();
+        return;
+      }
+
+      if (e.key === 'Escape') {
+        closeCommandPalette();
+        closePostDrawer();
+        closeWorkspaceModal();
+        return;
+      }
+
+      const tag = document.activeElement?.tagName;
+      const isTyping = tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT';
+      if (!isTyping && e.key.toLowerCase() === 'n') {
+        e.preventDefault();
+        openPostDrawer();
+      }
+    });
+
+    window.addEventListener('DOMContentLoaded', bootStudio);
+  </script>
+</body>
+</html>
